@@ -1,4 +1,3 @@
-
 import os
 import requests
 
@@ -43,13 +42,19 @@ PROJECT_KNOWLEDGE = """
 You are SlipBot, the official AI assistant for the Smart Slip Detection System.
 
 ==================================================
-YOUR TWO SOURCES OF INTELLIGENCE
+YOUR THREE SOURCES OF INTELLIGENCE
 ==================================================
 
-You should use BOTH:
+You should use THREE sources:
 
 1. PROJECT KNOWLEDGE
-2. YOUR GENERAL AI KNOWLEDGE AND REASONING
+2. CONVERSATION MEMORY
+3. GENERAL AI KNOWLEDGE AND REASONING
+
+
+==================================================
+1. PROJECT KNOWLEDGE
+==================================================
 
 The PROJECT KNOWLEDGE below is the authoritative source for facts about
 our specific Smart Slip Detection System prototype.
@@ -66,6 +71,7 @@ Your general knowledge and reasoning should be used to:
 - Explain HOW something works.
 - Answer general questions that are outside the project.
 
+
 IMPORTANT:
 
 Your general knowledge must NOT be used to invent facts about our
@@ -75,6 +81,7 @@ If a specific project detail is not documented below, say that the
 detail is not documented or cannot be confirmed.
 
 Do not invent:
+
 - Component prices
 - Testing results
 - Exact performance percentages
@@ -85,11 +92,84 @@ Do not invent:
 - Medical claims
 - Features described only as future improvements
 
-Clearly distinguish between:
 
-CURRENT PROTOTYPE
-and
-FUTURE / ADVANCED POSSIBILITIES.
+==================================================
+2. CONVERSATION MEMORY
+==================================================
+
+Previous conversation messages may be supplied with the user's request.
+
+Use conversation memory to understand references such as:
+
+- "it"
+- "that"
+- "this"
+- "the previous answer"
+- "what did you say earlier?"
+- "explain that again"
+- "make that shorter"
+- "what about the other sensor?"
+
+Conversation memory is conversational context.
+
+It is NOT authoritative project documentation.
+
+If conversation memory conflicts with PROJECT KNOWLEDGE:
+
+PROJECT KNOWLEDGE ALWAYS WINS for project-specific facts.
+
+
+Example:
+
+If previous conversation says:
+"The PIR is the main fall detector."
+
+but PROJECT KNOWLEDGE says:
+"The MPU6050 is the primary motion sensor."
+
+You must use the PROJECT KNOWLEDGE and correct the misunderstanding.
+
+
+Do not claim that something was implemented merely because it appeared
+in an earlier conversation.
+
+
+==================================================
+3. GENERAL AI KNOWLEDGE
+==================================================
+
+Use your normal AI knowledge and reasoning for questions outside the
+project.
+
+For example:
+
+"What is acceleration?"
+
+"How does an accelerometer work?"
+
+"What is IoT?"
+
+"What is the difference between a gyroscope and accelerometer?"
+
+These should receive normal scientifically accurate explanations.
+
+
+==================================================
+PRIORITY RULE
+==================================================
+
+For project-specific information:
+
+PROJECT KNOWLEDGE
+        >
+CONVERSATION MEMORY
+        >
+GENERAL ASSUMPTIONS
+
+
+For general questions:
+
+GENERAL AI KNOWLEDGE AND REASONING may be used normally.
 
 
 ==================================================
@@ -587,9 +667,6 @@ Say that the exact project cost has not been documented yet.
 
 Do NOT invent a number.
 
-If the user later provides the cost, that information can be added to the
-PROJECT KNOWLEDGE.
-
 The same rule applies to:
 
 - Exact testing results
@@ -629,7 +706,7 @@ You are SlipBot, the project's technical assistant.
 
 
 # =========================================================
-# WEBSITE
+# WEBSITE ROUTES
 # =========================================================
 
 @app.route("/")
@@ -638,7 +715,7 @@ def home():
 
 
 @app.route("/<path:path>")
-def files(path):
+def serve_file(path):
     return send_from_directory(".", path)
 
 
@@ -652,54 +729,189 @@ def chat():
     try:
 
         # -------------------------------------------------
-        # READ USER REQUEST
+        # READ REQUEST
         # -------------------------------------------------
 
         data = request.get_json(silent=True)
 
         if not data:
             return jsonify({
-                "error": "No JSON data received."
+                "error": "Invalid JSON request."
             }), 400
 
-        user_message = data.get("message", "").strip()
+
+        # -------------------------------------------------
+        # CURRENT USER MESSAGE
+        # -------------------------------------------------
+
+        user_message = data.get(
+            "message",
+            ""
+        ).strip()
 
         if not user_message:
             return jsonify({
-                "error": "Empty message."
+                "error": "Message cannot be empty."
             }), 400
 
 
         # -------------------------------------------------
-        # GET GROQ API KEY
+        # CONVERSATION MEMORY
         # -------------------------------------------------
 
-        api_key = os.environ.get("GROQ_API_KEY")
+        history = data.get(
+            "history",
+            []
+        )
+
+        # Safety check.
+        if not isinstance(history, list):
+            history = []
+
+
+        # Only use the most recent 20 messages.
+        #
+        # This gives SlipBot useful memory without making the
+        # Groq request unnecessarily huge.
+        history = history[-20:]
+
+
+        # -------------------------------------------------
+        # API KEY
+        # -------------------------------------------------
+
+        api_key = os.environ.get(
+            "GROQ_API_KEY"
+        )
 
         if not api_key:
 
-            print("ERROR: GROQ_API_KEY is not configured.")
+            print(
+                "ERROR: GROQ_API_KEY is not configured."
+            )
 
             return jsonify({
-                "error": "SlipBot is not configured correctly on the server."
+                "error":
+                "SlipBot is not configured correctly on the server."
             }), 500
 
 
         # -------------------------------------------------
-        # LOG REQUEST
+        # BUILD MESSAGE ARRAY
+        # -------------------------------------------------
+
+        messages = [
+
+            {
+                "role": "system",
+                "content": PROJECT_KNOWLEDGE
+            },
+
+            {
+                "role": "system",
+                "content": """
+The following messages are conversation memory from the current SlipBot
+conversation.
+
+Use them as context for understanding the user's current request.
+
+IMPORTANT:
+
+Conversation memory is NOT authoritative project documentation.
+
+If memory conflicts with the project knowledge provided above,
+the project knowledge wins.
+
+Do not invent project facts based on memory.
+
+CONVERSATION MEMORY:
+"""
+            }
+        ]
+
+
+        # -------------------------------------------------
+        # ADD MEMORY
+        # -------------------------------------------------
+
+        for item in history:
+
+            # Ignore malformed memory entries.
+            if not isinstance(item, dict):
+                continue
+
+
+            role = item.get(
+                "role"
+            )
+
+            content = item.get(
+                "content"
+            )
+
+
+            # Only accept normal conversation roles.
+            if role not in (
+                "user",
+                "assistant"
+            ):
+                continue
+
+
+            if not isinstance(
+                content,
+                str
+            ):
+                continue
+
+
+            content = content.strip()
+
+            if not content:
+                continue
+
+
+            # Prevent a single stored message from becoming huge.
+            content = content[:4000]
+
+
+            messages.append({
+
+                "role": role,
+
+                "content": content
+
+            })
+
+
+        # -------------------------------------------------
+        # ADD CURRENT USER MESSAGE
+        # -------------------------------------------------
+
+        messages.append({
+
+            "role": "user",
+
+            "content": user_message
+
+        })
+
+
+        # -------------------------------------------------
+        # DEBUG LOG
         # -------------------------------------------------
 
         print()
         print("====================================")
+        print("SlipBot request received")
         print("User:", user_message)
-        print("Sending request to Groq...")
+        print("Memory messages:", len(history))
         print("Model:", MODEL)
-        print("Mode: NON-STREAMING")
         print("====================================")
 
 
         # -------------------------------------------------
-        # SEND REQUEST TO GROQ
+        # GROQ REQUEST
         # -------------------------------------------------
 
         ai_response = requests.post(
@@ -707,37 +919,36 @@ def chat():
             GROQ_URL,
 
             headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
+
+                "Authorization":
+                f"Bearer {api_key}",
+
+                "Content-Type":
+                "application/json"
+
             },
 
             json={
-                "model": MODEL,
 
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": PROJECT_KNOWLEDGE
-                    },
-                    {
-                        "role": "user",
-                        "content": user_message
-                    }
-                ],
+                "model":
+                MODEL,
 
-                # Return the complete answer at once.
-                "stream": False,
+                "messages":
+                messages,
 
-                # Low temperature keeps project answers
-                # consistent and factual.
-                "temperature": 0.3,
+                "stream":
+                False,
 
-                # Enough room for a complete expo answer.
-                "max_tokens": 300
+                "temperature":
+                0.3,
+
+                "max_tokens":
+                300
+
             },
 
-            # Do not let SlipBot remain stuck indefinitely.
             timeout=30
+
         )
 
 
@@ -745,7 +956,10 @@ def chat():
         # LOG STATUS
         # -------------------------------------------------
 
-        print("AI status:", ai_response.status_code)
+        print(
+            "Groq status:",
+            ai_response.status_code
+        )
 
 
         # -------------------------------------------------
@@ -754,26 +968,41 @@ def chat():
 
         if not ai_response.ok:
 
-            print("Groq error response:")
-            print(ai_response.text)
+            print(
+                "Groq error:"
+            )
+
+            print(
+                ai_response.text
+            )
+
 
             try:
 
-                error_data = ai_response.json()
-
-                groq_error = error_data.get(
-                    "error",
-                    {}
+                error_data = (
+                    ai_response.json()
                 )
 
-                error_message = groq_error.get(
-                    "message",
-                    "Unknown Groq error."
+                groq_error = (
+                    error_data.get(
+                        "error",
+                        {}
+                    )
+                )
+
+                error_message = (
+                    groq_error.get(
+                        "message",
+                        "Unknown Groq error."
+                    )
                 )
 
             except Exception:
 
-                error_message = ai_response.text[:500]
+                error_message = (
+                    ai_response.text[:500]
+                )
+
 
             return jsonify({
 
@@ -790,7 +1019,7 @@ def chat():
 
 
         # -------------------------------------------------
-        # PARSE JSON
+        # PARSE GROQ JSON
         # -------------------------------------------------
 
         try:
@@ -799,8 +1028,13 @@ def chat():
 
         except ValueError:
 
-            print("ERROR: Groq returned invalid JSON.")
-            print(ai_response.text[:1000])
+            print(
+                "ERROR: Groq returned invalid JSON."
+            )
+
+            print(
+                ai_response.text[:1000]
+            )
 
             return jsonify({
 
@@ -821,8 +1055,13 @@ def chat():
 
         if not choices:
 
-            print("ERROR: Groq returned no choices.")
-            print(result)
+            print(
+                "ERROR: Groq returned no choices."
+            )
+
+            print(
+                result
+            )
 
             return jsonify({
 
@@ -833,20 +1072,20 @@ def chat():
 
 
         # -------------------------------------------------
-        # GET MESSAGE
+        # GET AI MESSAGE
         # -------------------------------------------------
 
-        message = choices[0].get(
+        ai_message = choices[0].get(
             "message",
             {}
         )
 
 
         # -------------------------------------------------
-        # GET CONTENT
+        # GET ANSWER
         # -------------------------------------------------
 
-        answer = message.get(
+        answer = ai_message.get(
             "content",
             ""
         )
@@ -854,8 +1093,13 @@ def chat():
 
         if not answer:
 
-            print("ERROR: Groq returned empty content.")
-            print(result)
+            print(
+                "ERROR: Groq returned empty content."
+            )
+
+            print(
+                result
+            )
 
             return jsonify({
 
@@ -869,23 +1113,34 @@ def chat():
         # SUCCESS
         # -------------------------------------------------
 
-        print("SlipBot answer received successfully.")
-        print("Answer length:", len(answer))
-        print("====================================")
+        print(
+            "SlipBot answer received successfully."
+        )
+
+        print(
+            "Answer length:",
+            len(answer)
+        )
+
+        print(
+            "===================================="
+        )
 
 
         # -------------------------------------------------
-        # RETURN COMPLETE ANSWER
+        # RETURN ANSWER
         # -------------------------------------------------
 
         return Response(
 
             answer,
 
-            content_type="text/plain; charset=utf-8",
+            content_type=
+            "text/plain; charset=utf-8",
 
             headers={
-                "Cache-Control": "no-cache"
+                "Cache-Control":
+                "no-cache"
             }
 
         )
@@ -897,8 +1152,13 @@ def chat():
 
     except requests.exceptions.ConnectionError as e:
 
-        print("ERROR: Could not connect to Groq.")
-        print(str(e))
+        print(
+            "ERROR: Could not connect to Groq."
+        )
+
+        print(
+            str(e)
+        )
 
         return jsonify({
 
@@ -914,8 +1174,13 @@ def chat():
 
     except requests.exceptions.Timeout as e:
 
-        print("ERROR: Groq request timed out.")
-        print(str(e))
+        print(
+            "ERROR: Groq request timed out."
+        )
+
+        print(
+            str(e)
+        )
 
         return jsonify({
 
@@ -931,8 +1196,13 @@ def chat():
 
     except Exception as e:
 
-        print("UNEXPECTED SERVER ERROR:")
-        print(str(e))
+        print(
+            "UNEXPECTED SERVER ERROR:"
+        )
+
+        print(
+            repr(e)
+        )
 
         return jsonify({
 
@@ -955,20 +1225,24 @@ if __name__ == "__main__":
         )
     )
 
+
     print("====================================")
     print("        SLIPBOT AI SERVER")
     print("====================================")
-    print(" Server starting...")
-    print(" AI: Groq")
-    print(" Model:", MODEL)
-    print(" Mode: NON-STREAMING")
-    print(" Knowledge Base: LOADED")
-    print(" General AI: ENABLED")
-    print(" CORS: ENABLED")
-    print(" UTF-8: ENABLED")
-    print(" Timeout: 30 seconds")
-    print(" Max output: 300 tokens")
+    print("Server starting...")
+    print("AI: Groq")
+    print("Model:", MODEL)
+    print("Mode: NON-STREAMING")
+    print("Knowledge Base: LOADED")
+    print("General AI: ENABLED")
+    print("Conversation Memory: ENABLED")
+    print("Memory Window: 20 messages")
+    print("CORS: ENABLED")
+    print("UTF-8: ENABLED")
+    print("Timeout: 30 seconds")
+    print("Max output: 300 tokens")
     print("====================================")
+
 
     app.run(
 
@@ -981,4 +1255,3 @@ if __name__ == "__main__":
         threaded=True
 
     )
-
