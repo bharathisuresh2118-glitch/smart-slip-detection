@@ -454,7 +454,7 @@ it clear that it is outside the project's documented specifications.
 You are SlipBot, the project's technical assistant.
 """
 
-
+import os
 import json
 import requests
 
@@ -462,8 +462,8 @@ from flask import Flask, request, jsonify, send_from_directory, Response, stream
 
 app = Flask(__name__)
 
-OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
-MODEL = "gemma3:4b"
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+MODEL = "llama-3.1-8b-instant"
 
 
 # =========================================================
@@ -488,6 +488,7 @@ def files(path):
 def chat():
 
     try:
+
         data = request.get_json()
 
         if not data:
@@ -502,42 +503,63 @@ def chat():
                 "error": "Empty message"
             }), 400
 
+        api_key = os.environ.get("GROQ_API_KEY")
+
+        if not api_key:
+            return jsonify({
+                "error": "GROQ_API_KEY is not configured on the server."
+            }), 500
+
         print()
         print("User:", user_message)
-        print("Sending streaming request to Ollama...")
+        print("Sending streaming request to AI...")
 
-        ollama_response = requests.post(
-            OLLAMA_URL,
+
+        ai_response = requests.post(
+
+            GROQ_URL,
+
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+
             json={
+
                 "model": MODEL,
 
                 "messages": [
+
                     {
                         "role": "system",
                         "content": PROJECT_KNOWLEDGE
                     },
+
                     {
                         "role": "user",
                         "content": user_message
                     }
+
                 ],
 
                 "stream": True,
 
-                "options": {
-                    "num_predict": 150,
-                    "temperature": 0.3
-                }
+                "temperature": 0.3,
+
+                "max_tokens": 150
+
             },
 
             stream=True,
 
             timeout=120
+
         )
 
-        print("Ollama status:", ollama_response.status_code)
 
-        ollama_response.raise_for_status()
+        print("AI status:", ai_response.status_code)
+
+        ai_response.raise_for_status()
 
 
         @stream_with_context
@@ -545,17 +567,35 @@ def chat():
 
             try:
 
-                for line in ollama_response.iter_lines():
+                for line in ai_response.iter_lines():
 
                     if not line:
                         continue
 
+
+                    if line.startswith(b"data: "):
+
+                        line = line[6:]
+
+
+                    if line == b"[DONE]":
+                        break
+
+
                     try:
+
                         data = json.loads(line)
 
-                        if "message" in data:
+                        choices = data.get("choices", [])
 
-                            content = data["message"].get(
+                        if choices:
+
+                            delta = choices[0].get(
+                                "delta",
+                                {}
+                            )
+
+                            content = delta.get(
                                 "content",
                                 ""
                             )
@@ -563,51 +603,92 @@ def chat():
                             if content:
                                 yield content
 
-                        if data.get("done", False):
-                            print()
-                            print("SlipBot finished streaming.")
-                            break
 
                     except json.JSONDecodeError:
+
                         continue
+
+
+                print()
+                print("SlipBot finished streaming.")
+
 
             except Exception as e:
 
-                print("Streaming error:", str(e))
+                print(
+                    "Streaming error:",
+                    str(e)
+                )
 
-                yield "\n\n⚠️ SlipBot encountered an error."
+                yield (
+                    "\n\n⚠️ SlipBot encountered an error."
+                )
 
 
         return Response(
+
             generate(),
+
             content_type="text/plain; charset=utf-8"
+
         )
 
 
     except requests.exceptions.ConnectionError:
 
-        print("ERROR: Could not connect to Ollama.")
+        print(
+            "ERROR: Could not connect to AI service."
+        )
 
         return jsonify({
-            "error": "SlipBot cannot connect to Ollama. Make sure Ollama is running."
+
+            "error":
+            "SlipBot could not connect to the AI service."
+
         }), 503
 
 
     except requests.exceptions.Timeout:
 
-        print("ERROR: Ollama timed out.")
+        print(
+            "ERROR: AI service timed out."
+        )
 
         return jsonify({
-            "error": "Ollama took too long to respond."
+
+            "error":
+            "The AI service took too long to respond."
+
         }), 504
+
+
+    except requests.exceptions.HTTPError as e:
+
+        print(
+            "AI HTTP error:",
+            str(e)
+        )
+
+        return jsonify({
+
+            "error":
+            "The AI service rejected the request."
+
+        }), 502
 
 
     except Exception as e:
 
-        print("ERROR:", str(e))
+        print(
+            "ERROR:",
+            str(e)
+        )
 
         return jsonify({
-            "error": str(e)
+
+            "error":
+            "An unexpected server error occurred."
+
         }), 500
 
 
@@ -617,19 +698,31 @@ def chat():
 
 if __name__ == "__main__":
 
+    port = int(
+        os.environ.get(
+            "PORT",
+            8000
+        )
+    )
+
     print("====================================")
     print("        SLIPBOT AI SERVER")
     print("====================================")
-    print(" Website: http://127.0.0.1:8000")
-    print(" Ollama:  http://127.0.0.1:11434")
-    print(" Model:   gemma3:4b")
-    print(" Mode:    STREAMING")
+    print(" Server starting...")
+    print(" AI: Groq")
+    print(" Model:", MODEL)
+    print(" Mode: STREAMING")
     print(" Knowledge Base: LOADED")
     print("====================================")
 
     app.run(
-        host="127.0.0.1",
-        port=8000,
-        debug=True,
+
+        host="0.0.0.0",
+
+        port=port,
+
+        debug=False,
+
         threaded=True
+
     )
