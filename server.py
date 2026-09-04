@@ -506,6 +506,10 @@ def files(path):
 # STREAMING AI
 # =========================================================
 
+# =========================================================
+# STREAMING AI
+# =========================================================
+
 @app.route("/api/chat", methods=["POST"])
 def chat():
 
@@ -562,7 +566,8 @@ def chat():
 
             headers={
                 "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Accept": "text/event-stream"
             },
 
             json={
@@ -604,8 +609,6 @@ def chat():
 
         print("AI status:", ai_response.status_code)
 
-
-        # Raise an exception for 4xx/5xx responses
         ai_response.raise_for_status()
 
 
@@ -618,42 +621,48 @@ def chat():
 
             try:
 
-                for line in ai_response.iter_lines():
+                for line in ai_response.iter_lines(
+                    decode_unicode=True
+                ):
 
                     if not line:
                         continue
 
-
                     # Remove SSE prefix
-                    if line.startswith(b"data: "):
+                    if line.startswith("data: "):
                         line = line[6:]
 
 
                     # End of stream
-                    if line == b"[DONE]":
+                    if line == "[DONE]":
                         break
 
 
                     try:
 
-                        data = json.loads(line)
+                        chunk = json.loads(line)
 
-                        choices = data.get("choices", [])
+                        choices = chunk.get(
+                            "choices",
+                            []
+                        )
 
-                        if choices:
+                        if not choices:
+                            continue
 
-                            delta = choices[0].get(
-                                "delta",
-                                {}
-                            )
 
-                            content = delta.get(
-                                "content",
-                                ""
-                            )
+                        delta = choices[0].get(
+                            "delta",
+                            {}
+                        )
 
-                            if content:
-                                yield content
+                        content = delta.get(
+                            "content",
+                            ""
+                        )
+
+                        if content:
+                            yield content
 
 
                     except json.JSONDecodeError:
@@ -677,11 +686,20 @@ def chat():
                 )
 
 
+        # -------------------------------------------------
+        # RETURN STREAM TO WEBSITE
+        # -------------------------------------------------
+
         return Response(
 
             generate(),
 
-            content_type="text/plain; charset=utf-8"
+            mimetype="text/plain",
+
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no"
+            }
 
         )
 
