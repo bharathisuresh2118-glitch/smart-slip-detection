@@ -50,6 +50,9 @@ function initSlipBot() {
     const aiCloseBtn =
         document.getElementById("ai-close-btn");
 
+    const aiFullscreenBtn =
+        document.getElementById("ai-fullscreen-btn");
+
     const aiOverlay =
         document.getElementById("ai-overlay");
 
@@ -82,6 +85,12 @@ function initSlipBot() {
     if (!aiCloseBtn) {
         console.error(
             "SlipBot error: #ai-close-btn not found."
+        );
+    }
+
+    if (!aiFullscreenBtn) {
+        console.warn(
+            "SlipBot warning: #ai-fullscreen-btn not found."
         );
     }
 
@@ -216,12 +225,52 @@ function initSlipBot() {
                     "active"
                 );
 
+                aiOverlay.classList.remove(
+                    "fullscreen"
+                );
+
                 document.body.style.overflow =
                     "";
+
+                if (aiFullscreenBtn) {
+
+                    aiFullscreenBtn.title =
+                        "Full screen";
+
+                }
 
                 setAIStatus(
                     "SLIPBOT STANDBY"
                 );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       FULLSCREEN TOGGLE
+    ===================================================== */
+
+    if (aiFullscreenBtn && aiOverlay) {
+
+        aiFullscreenBtn.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const isFullscreen =
+                    aiOverlay.classList.toggle(
+                        "fullscreen"
+                    );
+
+                aiFullscreenBtn.title =
+                    isFullscreen
+                        ? "Exit full screen"
+                        : "Full screen";
 
             }
         );
@@ -247,8 +296,19 @@ function initSlipBot() {
                         "active"
                     );
 
+                    aiOverlay.classList.remove(
+                        "fullscreen"
+                    );
+
                     document.body.style.overflow =
                         "";
+
+                    if (aiFullscreenBtn) {
+
+                        aiFullscreenBtn.title =
+                            "Full screen";
+
+                    }
 
                     setAIStatus(
                         "SLIPBOT STANDBY"
@@ -282,8 +342,19 @@ function initSlipBot() {
                     "active"
                 );
 
+                aiOverlay.classList.remove(
+                    "fullscreen"
+                );
+
                 document.body.style.overflow =
                     "";
+
+                if (aiFullscreenBtn) {
+
+                    aiFullscreenBtn.title =
+                        "Full screen";
+
+                }
 
                 setAIStatus(
                     "SLIPBOT STANDBY"

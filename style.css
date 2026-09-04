@@ -8366,3 +8366,107 @@ canvas {
 #neural-network-bg {
     pointer-events: none !important;
 }
+/* =========================================================
+   SLIPBOT FULLSCREEN BUTTON
+========================================================= */
+
+.ai-fullscreen-button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: 10px;
+    background: rgba(0, 229, 255, 0.06);
+    color: #00e5ff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+    margin-left: auto;
+}
+
+.ai-fullscreen-button:hover {
+    background: rgba(0, 229, 255, 0.15);
+    transform: scale(1.05);
+}
+
+/* Fullscreen SlipBot */
+
+#ai-overlay.fullscreen {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+#ai-overlay.fullscreen .ai-window {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    transform: none;
+}
+
+#ai-overlay.fullscreen .chat-messages {
+    flex: 1;
+}
+/* =========================================================
+   SLIPBOT INTERACTION + FULLSCREEN FIX
+========================================================= */
+
+#ai-overlay {
+    pointer-events: none !important;
+}
+
+#ai-overlay.active {
+    pointer-events: auto !important;
+}
+
+/* Fullscreen mode */
+
+#ai-overlay.fullscreen {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+#ai-overlay.fullscreen .ai-window {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    transform: none;
+}
+
+/* Neural background never blocks clicks */
+
+#neural-network-bg,
+canvas {
+    pointer-events: none !important;
+}
+
+/* Fullscreen button */
+
+.ai-fullscreen-button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: 10px;
+    background: rgba(0, 229, 255, 0.06);
+    color: #00e5ff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+}
+
+.ai-fullscreen-button:hover {
+    background: rgba(0, 229, 255, 0.15);
+    transform: scale(1.05);
+}
