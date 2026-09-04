@@ -8310,3 +8310,26 @@ body {
 .ai-system-status {
     transition: opacity 0.2s ease;
 }
+/* Make sure the background animation never blocks clicks */
+#neural-network-bg,
+.neural-network-bg,
+canvas {
+    pointer-events: none !important;
+}
+
+/* Keep SlipBot above everything */
+.ai-floating-button {
+    position: fixed !important;
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+.ai-overlay {
+    z-index: 99998 !important;
+    pointer-events: auto !important;
+}
+
+.ai-window {
+    pointer-events: auto !important;
+}
