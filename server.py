@@ -1,7 +1,23 @@
-from flask import Flask, request, jsonify, send_from_directory, Response, stream_with_context
+import os
+import json
+import requests
+
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    send_from_directory,
+    Response,
+    stream_with_context
+)
+
 from flask_cors import CORS
 
-app = Flask(__name__)
+
+# =========================================================
+# FLASK APP
+# =========================================================
+
 app = Flask(__name__)
 
 CORS(app, resources={
@@ -10,9 +26,19 @@ CORS(app, resources={
     }
 })
 
-OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
-MODEL = "gemma3:4b"
 
+# =========================================================
+# GROQ CONFIGURATION
+# =========================================================
+
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+
+MODEL = "openai/gpt-oss-20b"
+
+
+# =========================================================
+# PROJECT KNOWLEDGE
+# =========================================================
 
 PROJECT_KNOWLEDGE = """
 You are SlipBot, the official AI assistant for the Smart Slip Detection System.
@@ -130,7 +156,7 @@ A more advanced version may use:
 Normal movement
 → possible free-fall/reduction
 → impact
-→ orientation change
+→ orientation
 → confirmation
 
 Do NOT claim that the advanced free-fall/orientation algorithm is already
@@ -255,7 +281,7 @@ The ultrasonic sensor pin assignment has been discussed as a proposed configurat
 Do not present D4/D5 as definitely final unless the user confirms it.
 
 Earlier project versions also used other ultrasonic pin assignments, so treat the
-ultrasonic pins as requiring confirmation if asked.
+ultrasonic pins as requiring confirmation if asked. 
 
 
 ==================================================
@@ -461,17 +487,6 @@ it clear that it is outside the project's documented specifications.
 You are SlipBot, the project's technical assistant.
 """
 
-import os
-import json
-import requests
-
-from flask import Flask, request, jsonify, send_from_directory, Response, stream_with_context
-
-app = Flask(__name__)
-
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama-3.1-8b-instant"
-
 
 # =========================================================
 # WEBSITE
@@ -496,6 +511,10 @@ def chat():
 
     try:
 
+        # -------------------------------------------------
+        # READ USER REQUEST
+        # -------------------------------------------------
+
         data = request.get_json()
 
         if not data:
@@ -510,6 +529,11 @@ def chat():
                 "error": "Empty message"
             }), 400
 
+
+        # -------------------------------------------------
+        # GET GROQ API KEY
+        # -------------------------------------------------
+
         api_key = os.environ.get("GROQ_API_KEY")
 
         if not api_key:
@@ -517,10 +541,20 @@ def chat():
                 "error": "GROQ_API_KEY is not configured on the server."
             }), 500
 
+
+        # -------------------------------------------------
+        # LOG REQUEST
+        # -------------------------------------------------
+
         print()
         print("User:", user_message)
-        print("Sending streaming request to AI...")
+        print("Sending streaming request to Groq...")
+        print("Model:", MODEL)
 
+
+        # -------------------------------------------------
+        # SEND REQUEST TO GROQ
+        # -------------------------------------------------
 
         ai_response = requests.post(
 
@@ -564,10 +598,20 @@ def chat():
         )
 
 
+        # -------------------------------------------------
+        # STATUS
+        # -------------------------------------------------
+
         print("AI status:", ai_response.status_code)
 
+
+        # Raise an exception for 4xx/5xx responses
         ai_response.raise_for_status()
 
+
+        # -------------------------------------------------
+        # STREAM RESPONSE
+        # -------------------------------------------------
 
         @stream_with_context
         def generate():
@@ -580,11 +624,12 @@ def chat():
                         continue
 
 
+                    # Remove SSE prefix
                     if line.startswith(b"data: "):
-
                         line = line[6:]
 
 
+                    # End of stream
                     if line == b"[DONE]":
                         break
 
@@ -641,10 +686,14 @@ def chat():
         )
 
 
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
+
     except requests.exceptions.ConnectionError:
 
         print(
-            "ERROR: Could not connect to AI service."
+            "ERROR: Could not connect to Groq."
         )
 
         return jsonify({
@@ -658,7 +707,7 @@ def chat():
     except requests.exceptions.Timeout:
 
         print(
-            "ERROR: AI service timed out."
+            "ERROR: Groq request timed out."
         )
 
         return jsonify({
@@ -670,20 +719,44 @@ def chat():
 
 
     except requests.exceptions.HTTPError as e:
-        print("AI HTTP error:", str(e))
-        if 'ai_response' in locals():
-            print("Groq response:", ai_response.text)
+
+        print(
+            "AI HTTP error:",
+            str(e)
+        )
+
+        if "ai_response" in locals():
+
+            print(
+                "Groq response:",
+                ai_response.text
+            )
 
         return jsonify({
-            "error": "The AI service rejected the request.",
-            "details": ai_response.text if 'ai_response' in locals() else str(e)
+
+            "error":
+            "The AI service rejected the request.",
+
+            "details":
+            ai_response.text
+            if "ai_response" in locals()
+            else str(e)
+
         }), 502
 
+
     except Exception as e:
-        print("ERROR:", str(e))
+
+        print(
+            "ERROR:",
+            str(e)
+        )
 
         return jsonify({
-            "error": "An unexpected server error occurred."
+
+            "error":
+            "An unexpected server error occurred."
+
         }), 500
 
 
@@ -708,6 +781,7 @@ if __name__ == "__main__":
     print(" Model:", MODEL)
     print(" Mode: STREAMING")
     print(" Knowledge Base: LOADED")
+    print(" CORS: ENABLED")
     print("====================================")
 
     app.run(
