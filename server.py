@@ -92,6 +92,11 @@ Do not invent:
 - Medical claims
 - Features described only as future improvements
 
+PROJECT COST:
+- The total cost of the Smart Slip Detection System prototype is less than ₹2,000.
+- The project is designed as a low-cost safety prototype.
+- Do not invent an exact cost or component-wise price breakdown unless it is explicitly provided in the project knowledge.
+
 
 ==================================================
 2. CONVERSATION MEMORY
@@ -212,6 +217,902 @@ a designated person through GSM communication.
 Core concept:
 
 Detect -> Confirm/Monitor -> Alert -> Notify -> Acknowledge -> Reset
+
+
+# SMART SLIP DETECTION AND ALERT SYSTEM
+
+## Complete Project Information for AI Video Generation
+
+This is a school science-expo project called the **Smart Slip Detection and Alert System**.
+
+The project is a working prototype designed to detect a possible slip or fall in a bathroom and provide immediate alerts.
+
+The physical demonstration is built as a **cardboard model house containing a cardboard bathroom**. The bathroom represents a real bathroom in a home where a person could potentially slip.
+
+The system combines motion sensing, human movement detection, distance measurement, a microcontroller, visual feedback, local alarms, and GSM-based emergency messaging.
+
+The main electronic system consists of:
+
+* Arduino Uno
+* MPU6050 accelerometer and gyroscope
+* PIR sensor
+* Ultrasonic sensor
+* LCD display
+* Main buzzer
+* Secondary/micro buzzer for neighbourhood alert
+* SIM900A GSM module
+* Jumper wires and power connections
+* Cardboard house and cardboard bathroom prototype
+
+---
+
+# 1. MAIN PURPOSE
+
+The purpose of the project is to create a safety system that can recognize a possible bathroom slip/fall and alert people nearby.
+
+Bathrooms can contain slippery surfaces, especially when water is present. A person may lose balance and require assistance.
+
+The system attempts to reduce the delay between an accident and someone becoming aware of it.
+
+The basic concept is:
+
+**Monitor → Detect → Confirm → Alert → Notify**
+
+The system continuously monitors activity inside the bathroom.
+
+When suspicious motion is detected, the Arduino analyzes the sensor information.
+
+If the event is determined to be a possible slip/fall, the system:
+
+1. Shows an emergency message on the LCD.
+2. Activates the main buzzer.
+3. Activates the second buzzer intended to alert nearby neighbours.
+4. Uses the GSM module to send an emergency SMS.
+
+---
+
+# 2. PHYSICAL PROTOTYPE
+
+The project is represented using a **cardboard model of a house**.
+
+The house contains a dedicated bathroom.
+
+The cardboard prototype should visibly communicate that this is a miniature home environment.
+
+The bathroom should contain:
+
+* Bathroom walls.
+* Bathroom floor.
+* Door or entrance.
+* Basic bathroom fixtures.
+* Sensor system.
+* Electronics.
+* Wiring.
+* LCD display.
+* Alert devices.
+
+The bathroom is the central monitored area.
+
+The electronics should be mounted around or inside the bathroom in a realistic way.
+
+The cardboard construction should look like a student-built science-expo prototype, not a professionally manufactured smart-home product.
+
+---
+
+# 3. THE ARDUINO UNO
+
+The **Arduino Uno** is the central microcontroller of the project.
+
+It acts as the brain of the system.
+
+It receives information from:
+
+* MPU6050
+* PIR sensor
+* Ultrasonic sensor
+
+It processes this information and controls:
+
+* LCD
+* Main buzzer
+* Secondary/neighbourhood buzzer
+* GSM module
+
+The Arduino should be represented as a real Arduino Uno development board with its characteristic board layout, USB connector, digital pins, analog pins, power section, and microcontroller.
+
+It should remain physically consistent throughout the video.
+
+The Arduino should not be replaced by an ESP32.
+
+IMPORTANT:
+
+**This current project uses Arduino Uno as the main controller.**
+
+Do not represent the controller as an ESP32.
+
+---
+
+# 4. MPU6050
+
+The **MPU6050** is one of the most important sensors in the project.
+
+It combines:
+
+* Accelerometer
+* Gyroscope
+
+The accelerometer measures changes in acceleration.
+
+The gyroscope measures rotational movement.
+
+These measurements allow the system to monitor unusual movement and changes in orientation.
+
+The MPU6050 is used to help identify the sudden motion associated with a possible slip or fall.
+
+The system is designed to focus on a meaningful sudden movement rather than simply reacting to every small vibration.
+
+For example:
+
+Normal movement:
+
+* Walking.
+* Small movements.
+* Minor environmental vibration.
+
+should not automatically be treated as a slip.
+
+A significant abnormal movement can trigger the detection process.
+
+The MPU6050 should be securely mounted in the bathroom prototype and connected to the Arduino using appropriate wiring.
+
+---
+
+# 5. PIR SENSOR
+
+The project contains a **PIR sensor**.
+
+PIR means Passive Infrared.
+
+The PIR sensor detects movement of people in its monitored area.
+
+Its purpose is to determine whether human movement is occurring in the bathroom.
+
+The PIR is therefore part of the human-presence/movement detection layer.
+
+The PIR should be positioned so that its sensing area covers the bathroom.
+
+It should look like a real PIR module with its characteristic white dome-shaped sensing element.
+
+The PIR should not be portrayed as measuring acceleration or detecting the exact force of a fall.
+
+Its role is movement detection.
+
+---
+
+# 6. ULTRASONIC SENSOR
+
+The project also uses an **ultrasonic distance sensor**.
+
+The ultrasonic sensor measures distance by sending ultrasonic waves and measuring the returning signal.
+
+In this project, it can be used to determine the distance between the sensor and nearby surfaces or objects.
+
+The sensor provides additional environmental information that can support the detection system.
+
+The ultrasonic sensor should be physically mounted in the bathroom prototype.
+
+It should look like a real ultrasonic module, with two circular transducers resembling two small eyes.
+
+The sensor must remain visually consistent throughout the video.
+
+Do not replace it with a camera or another distance sensor.
+
+---
+
+# 7. LCD DISPLAY
+
+The project contains an LCD display for providing visual information.
+
+The LCD allows the user, demonstrator, teacher, or visitor to understand the current state of the system.
+
+During normal operation, the LCD can display messages such as:
+
+**SYSTEM ACTIVE**
+
+**MONITORING...**
+
+When a possible emergency is detected, it can display:
+
+**SLIP DETECTED**
+
+**CHECK PERSON!**
+
+The exact displayed text can be adapted to the actual programmed system, but the concept is that the LCD changes from a normal monitoring state to an emergency state.
+
+The LCD should be clearly visible on the cardboard house.
+
+It should appear physically connected to the Arduino.
+
+---
+
+# 8. MAIN BUZZER
+
+The system contains a **main buzzer**.
+
+Its purpose is to provide an immediate local audible alarm when a possible slip/fall is detected.
+
+During normal monitoring:
+
+**Main buzzer = OFF**
+
+During an emergency:
+
+**Main buzzer = ON**
+
+The buzzer should produce an obvious warning sound.
+
+It should not be represented as an explosion or a cinematic alarm system.
+
+It is a small electronic buzzer used for a school prototype.
+
+---
+
+# 9. SECOND BUZZER FOR NEIGHBOURS
+
+The project contains a **second buzzer**, sometimes referred to as the micro-buzzer or neighbourhood buzzer.
+
+This is an important part of the project's alert concept.
+
+The purpose of the second buzzer is to provide an alert that can be noticed by **nearby people/neighbours**.
+
+The system therefore has two physical audible alert devices:
+
+### Buzzer 1
+
+Local emergency alarm.
+
+### Buzzer 2
+
+Additional alert intended to notify people nearby, such as neighbours.
+
+Both buzzers can activate when the system determines that an emergency has occurred.
+
+The video should clearly show that the second buzzer exists for **neighbourhood awareness**, rather than incorrectly describing it as another sensor.
+
+---
+
+# 10. SIM900A GSM MODULE
+
+The project uses a **SIM900A GSM module** for emergency messaging.
+
+This is one of the key features of the system.
+
+When a possible slip/fall is confirmed, the Arduino communicates with the GSM module.
+
+The SIM900A then sends an emergency SMS to a predefined recipient.
+
+The purpose of the SMS is to notify someone remotely that an emergency may have occurred.
+
+The communication concept is:
+
+**Arduino → SIM900A GSM → Mobile network → Emergency SMS**
+
+The video should visually represent this as a remote communication feature.
+
+A phone can be shown receiving an emergency message.
+
+The message can conceptually say something like:
+
+**"Emergency! Possible slip/fall detected in the bathroom. Please check immediately."**
+
+Do not claim that the system contacts emergency services automatically unless that is actually implemented.
+
+The important feature is **SMS notification through GSM**.
+
+---
+
+# 11. COMPLETE SYSTEM INPUTS
+
+The system has three major sensing inputs:
+
+### MPU6050
+
+Monitors acceleration and rotational movement.
+
+### PIR
+
+Detects human movement/presence.
+
+### Ultrasonic sensor
+
+Measures distance to nearby objects/surfaces.
+
+These sensors provide information to the Arduino.
+
+The Arduino combines the information rather than relying blindly on a single sensor.
+
+---
+
+# 12. COMPLETE SYSTEM OUTPUTS
+
+The system has four major output/response elements:
+
+### LCD
+
+Provides visual status.
+
+### Main buzzer
+
+Provides a local audible alert.
+
+### Secondary buzzer
+
+Provides an additional audible alert intended for nearby neighbours.
+
+### SIM900A GSM
+
+Sends a remote emergency SMS.
+
+Therefore the system provides:
+
+**Visual Alert + Local Alarm + Neighbourhood Alarm + Remote SMS**
+
+---
+
+# 13. NORMAL MONITORING STATE
+
+When the system is operating normally, it continuously monitors the bathroom.
+
+The Arduino reads sensor information.
+
+The PIR checks for human movement.
+
+The MPU6050 monitors motion.
+
+The ultrasonic sensor measures distance.
+
+The LCD indicates that the system is active.
+
+The buzzers remain silent.
+
+No emergency SMS is sent.
+
+This is the normal state.
+
+Example LCD:
+
+**SYSTEM ACTIVE**
+
+or:
+
+**MONITORING...**
+
+---
+
+# 14. PERSON ENTERS THE BATHROOM
+
+The demonstration begins with a person approaching the cardboard house.
+
+The person enters the bathroom.
+
+The PIR sensor detects movement.
+
+The Arduino receives the PIR signal.
+
+The system remains in monitoring mode.
+
+The MPU6050 continues measuring motion.
+
+The ultrasonic sensor continues measuring distance.
+
+The LCD continues showing the normal monitoring status.
+
+The buzzers remain OFF.
+
+This demonstrates that merely entering the bathroom does not automatically create an emergency.
+
+---
+
+# 15. NORMAL MOVEMENT
+
+The person moves normally inside the bathroom.
+
+The system continues monitoring.
+
+The person can walk or move without triggering the emergency alarm.
+
+This is important because the project is intended to distinguish ordinary movement from a suspicious event.
+
+The video should not show the system falsely triggering every time the person moves.
+
+---
+
+# 16. SIMULATED SLIP EVENT
+
+The person performs a **safe, controlled demonstration of losing balance**.
+
+The event should not show injury, pain, or graphic content.
+
+The focus should be on the sensor response.
+
+During the simulated event:
+
+* Movement suddenly changes.
+* The MPU6050 detects abnormal acceleration and/or rotation.
+* The PIR confirms human movement/activity.
+* The ultrasonic sensor provides distance information.
+* The Arduino processes the available sensor information.
+
+The system then determines whether the event should be treated as a possible slip/fall.
+
+---
+
+# 17. DETECTION LOGIC CONCEPT
+
+The project should be presented as a **multi-sensor detection system**.
+
+The Arduino does not simply say:
+
+"Movement happened = slip."
+
+Instead, it considers sensor information to identify an abnormal event.
+
+Conceptually:
+
+**Human movement detected**
+
+*
+
+**Unusual motion detected**
+
+*
+
+**Supporting environmental/distance information**
+
+↓
+
+**Possible slip/fall**
+
+The exact algorithm can depend on the implemented Arduino code.
+
+Do not invent specific mathematical thresholds in the video unless those values are supplied separately.
+
+---
+
+# 18. EMERGENCY CONFIRMATION
+
+When the sensor data indicates a possible slip/fall, the system enters its emergency response process.
+
+The purpose of confirmation is to reduce false alarms.
+
+The video should visually communicate that the Arduino is processing the event before activating all emergency outputs.
+
+The sequence should be:
+
+**Sensor readings**
+
+↓
+
+**Arduino processing**
+
+↓
+
+**Possible slip detected**
+
+↓
+
+**Emergency response**
+
+---
+
+# 19. LCD EMERGENCY RESPONSE
+
+Once the event is confirmed as a possible emergency, the LCD changes from the normal monitoring message.
+
+For example:
+
+**SLIP DETECTED**
+
+**CHECK PERSON!**
+
+The LCD should be shown clearly in a close-up shot.
+
+The text should be sharp and readable.
+
+---
+
+# 20. LOCAL BUZZER RESPONSE
+
+The main buzzer activates.
+
+The buzzer provides an immediate audible warning to people close to the bathroom.
+
+The video can show the buzzer physically vibrating or operating while the emergency status is shown on the LCD.
+
+The sound should be a realistic electronic warning beep.
+
+---
+
+# 21. NEIGHBOURHOOD BUZZER RESPONSE
+
+The second buzzer also provides an alert.
+
+Its purpose is to make the emergency noticeable to nearby people/neighbours.
+
+This demonstrates that the system is not limited to someone standing directly beside the bathroom.
+
+The video should explicitly communicate:
+
+**Second buzzer → nearby/neighbour alert**
+
+The second buzzer should be visibly distinct from the main buzzer if possible.
+
+---
+
+# 22. GSM SMS RESPONSE
+
+The Arduino communicates with the SIM900A GSM module.
+
+The GSM module sends an emergency SMS.
+
+A smartphone can be shown receiving the message.
+
+The video should show the concept clearly:
+
+**SLIP DETECTED**
+
+↓
+
+**Arduino processes event**
+
+↓
+
+**SIM900A GSM**
+
+↓
+
+**SMS sent**
+
+↓
+
+**Person receives alert**
+
+The phone notification should look realistic.
+
+Do not show fake futuristic holographic messaging.
+
+---
+
+# 23. COMPLETE EMERGENCY CHAIN
+
+The full emergency chain is:
+
+**Possible slip/fall**
+
+↓
+
+**MPU6050 detects abnormal motion**
+
+↓
+
+**PIR detects human movement**
+
+↓
+
+**Ultrasonic sensor provides distance information**
+
+↓
+
+**Arduino processes the sensor data**
+
+↓
+
+**Emergency condition confirmed**
+
+↓
+
+**LCD displays "SLIP DETECTED"**
+
+↓
+
+**Main buzzer activates**
+
+↓
+
+**Neighbourhood buzzer activates**
+
+↓
+
+**SIM900A sends emergency SMS**
+
+This is the central story of the project.
+
+---
+
+# 24. SYSTEM BLOCK DIAGRAM CONCEPT
+
+The project can be visually represented as:
+
+```
+          ┌───────────────┐
+          │    PIR        │
+          │ Movement      │
+          └───────┬───────┘
+                  │
+                  │
+          ┌───────▼───────┐
+          │   MPU6050     │
+          │ Motion +      │
+          │ Orientation   │
+          └───────┬───────┘
+                  │
+                  │
+          ┌───────▼───────┐
+          │  ULTRASONIC   │
+          │   Distance    │
+          └───────┬───────┘
+                  │
+                  ▼
+          ┌───────────────┐
+          │ ARDUINO UNO   │
+          │ Main Control  │
+          └───────┬───────┘
+                  │
+   ┌──────────────┼───────────────┐
+   │              │               │
+   ▼              ▼               ▼
+ LCD          BUZZER 1        BUZZER 2
+```
+
+Display       Local Alert    Neighbour Alert
+│
+│
+▼
+SIM900A GSM
+│
+▼
+Emergency SMS
+│
+▼
+Mobile Phone
+
+This is a conceptual representation of the system and should not be interpreted as an exact electrical schematic unless exact wiring is provided.
+
+---
+
+# 25. ROLE OF EACH COMPONENT IN ONE TABLE
+
+| Component          | Role                                          |
+| ------------------ | --------------------------------------------- |
+| Arduino Uno        | Main controller/brain                         |
+| MPU6050            | Detects acceleration and rotational movement  |
+| PIR Sensor         | Detects human movement/presence               |
+| Ultrasonic Sensor  | Measures distance                             |
+| LCD                | Displays system status and emergency messages |
+| Main Buzzer        | Local emergency alarm                         |
+| Second Buzzer      | Alerts nearby people/neighbours               |
+| SIM900A GSM        | Sends emergency SMS                           |
+| Cardboard House    | Represents a real home                        |
+| Cardboard Bathroom | Represents the monitored environment          |
+
+---
+
+# 26. WHAT THE PROJECT IS NOT
+
+The AI must not incorrectly portray this project as:
+
+* An ESP32 project.
+* A camera-based fall detector.
+* A facial-recognition system.
+* A medical diagnostic device.
+* A hospital emergency system.
+* A load-cell system.
+* An HX711 system.
+* A smartwatch.
+* A phone-only application.
+* A futuristic AI robot.
+* A GPS tracking system unless specifically added.
+* An automatic emergency-services calling system unless specifically implemented.
+
+The current project is specifically based on:
+
+**Arduino Uno + MPU6050 + PIR + Ultrasonic + LCD + 2 Buzzers + SIM900A GSM**
+
+---
+
+# 27. VISUAL APPEARANCE OF THE ELECTRONICS
+
+All electronic components should look physically realistic.
+
+The AI should preserve:
+
+### Arduino Uno
+
+Blue Arduino Uno-style development board.
+
+### MPU6050
+
+Small motion-sensor breakout board.
+
+### PIR
+
+Small module with white dome.
+
+### Ultrasonic
+
+Small module with two circular transducers.
+
+### LCD
+
+Rectangular character display module.
+
+### Buzzers
+
+Small cylindrical or compact electronic buzzers.
+
+### SIM900A
+
+GSM communication module with visible electronic-board characteristics and antenna/SIM-related hardware as appropriate.
+
+### Wiring
+
+Real jumper wires connecting the components.
+
+The electronics should have realistic dimensions relative to the cardboard bathroom.
+
+---
+
+# 28. CARDboard MODEL APPEARANCE
+
+The cardboard house should visibly look handmade.
+
+Use:
+
+* Brown/cardboard-colored structural surfaces.
+* Cut cardboard walls.
+* Small bathroom.
+* Clearly visible electronics.
+* Practical mounting of sensors.
+* Realistic wires.
+
+The prototype should look suitable for a **Grade 9 science exhibition**.
+
+It should not look like a commercial smart-home installation.
+
+---
+
+# 29. POSSIBLE VIDEO SEQUENCE
+
+A complete demonstration could follow this order:
+
+### Scene 1
+
+Wide shot of the cardboard house.
+
+### Scene 2
+
+Camera moves toward the bathroom.
+
+### Scene 3
+
+Reveal the electronics.
+
+### Scene 4
+
+Close-up of Arduino Uno.
+
+### Scene 5
+
+Close-up of MPU6050.
+
+### Scene 6
+
+Close-up of PIR sensor.
+
+### Scene 7
+
+Close-up of ultrasonic sensor.
+
+### Scene 8
+
+Close-up of LCD.
+
+### Scene 9
+
+Show the two buzzers.
+
+### Scene 10
+
+Show the SIM900A GSM module.
+
+### Scene 11
+
+Person enters bathroom.
+
+### Scene 12
+
+PIR detects movement.
+
+### Scene 13
+
+Person moves normally.
+
+### Scene 14
+
+Safe simulated slip occurs.
+
+### Scene 15
+
+MPU6050 detects abnormal movement.
+
+### Scene 16
+
+Arduino processes sensor information.
+
+### Scene 17
+
+LCD changes to emergency status.
+
+### Scene 18
+
+Main buzzer activates.
+
+### Scene 19
+
+Neighbourhood buzzer activates.
+
+### Scene 20
+
+SIM900A sends emergency SMS.
+
+### Scene 21
+
+Phone receives the message.
+
+### Scene 22
+
+Final wide shot of the complete system.
+
+---
+
+# 30. FINAL MESSAGE OF THE PROJECT
+
+The central message of the project is:
+
+A bathroom slip can happen unexpectedly.
+
+A combination of sensors can monitor the environment and detect unusual movement.
+
+An Arduino can process the sensor information.
+
+Once a possible emergency is detected, the system can provide several forms of notification:
+
+**LCD + Local Buzzer + Neighbourhood Buzzer + GSM SMS**
+
+This creates a multi-layer alert system.
+
+---
+
+# 31. AI VIDEO GENERATION RULE
+
+When generating a video about this project, treat the information above as the authoritative description of the prototype.
+
+The AI should maintain physical consistency.
+
+The same Arduino Uno, MPU6050, PIR sensor, ultrasonic sensor, LCD, two buzzers, and SIM900A GSM module should appear throughout the video.
+
+The cardboard house and bathroom should remain the same physical environment.
+
+The system should look like a real student-built electronics prototype.
+
+The video should prioritize technical clarity and realistic operation over exaggerated cinematic effects.
+
+The simulated slip should be safe and non-graphic.
+
+The final viewer should understand:
+
+**This is a bathroom safety prototype that uses multiple sensors and an Arduino to detect a possible slip/fall and then alert people locally, nearby, and remotely through GSM SMS.**
+
 
 
 ==================================================
