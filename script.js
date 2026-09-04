@@ -731,3 +731,581 @@ document.addEventListener(
 
     }
 );
+/* =========================================================
+   NEURAL SENSOR NETWORK
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* -----------------------------------------------------
+       CREATE CANVAS
+    ----------------------------------------------------- */
+
+    const canvas =
+        document.createElement("canvas");
+
+    canvas.id =
+        "neural-network-bg";
+
+    document.body.prepend(canvas);
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    /* -----------------------------------------------------
+       SETTINGS
+    ----------------------------------------------------- */
+
+    const settings = {
+
+        nodeCount:
+            window.innerWidth < 700 ? 32 : 65,
+
+        connectionDistance:
+            window.innerWidth < 700 ? 120 : 155,
+
+        nodeSpeed:
+            0.18,
+
+        pulseSpeed:
+            0.018,
+
+        mouseInfluence:
+            80
+
+    };
+
+
+    /* -----------------------------------------------------
+       CANVAS SIZE
+    ----------------------------------------------------- */
+
+    let width;
+    let height;
+    let dpr;
+
+
+    function resizeCanvas() {
+
+        dpr =
+            Math.min(
+                window.devicePixelRatio || 1,
+                2
+            );
+
+        width =
+            window.innerWidth;
+
+        height =
+            window.innerHeight;
+
+
+        canvas.width =
+            width * dpr;
+
+        canvas.height =
+            height * dpr;
+
+
+        canvas.style.width =
+            width + "px";
+
+        canvas.style.height =
+            height + "px";
+
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+
+    }
+
+
+    resizeCanvas();
+
+
+    window.addEventListener(
+        "resize",
+        resizeCanvas
+    );
+
+
+    /* -----------------------------------------------------
+       MOUSE
+    ----------------------------------------------------- */
+
+    const mouse = {
+
+        x: null,
+        y: null
+
+    };
+
+
+    window.addEventListener(
+        "mousemove",
+        (event) => {
+
+            mouse.x =
+                event.clientX;
+
+            mouse.y =
+                event.clientY;
+
+        }
+    );
+
+
+    window.addEventListener(
+        "mouseleave",
+        () => {
+
+            mouse.x = null;
+            mouse.y = null;
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       NODE CLASS
+    ----------------------------------------------------- */
+
+    class Node {
+
+        constructor() {
+
+            this.x =
+                Math.random() * width;
+
+            this.y =
+                Math.random() * height;
+
+
+            this.vx =
+                (Math.random() - 0.5)
+                * settings.nodeSpeed;
+
+            this.vy =
+                (Math.random() - 0.5)
+                * settings.nodeSpeed;
+
+
+            this.radius =
+                Math.random() * 1.7 + 1;
+
+
+            this.phase =
+                Math.random() * Math.PI * 2;
+
+
+            this.pulse =
+                Math.random();
+
+        }
+
+
+        update() {
+
+            this.x += this.vx;
+            this.y += this.vy;
+
+
+            /* ---------------------------------------------
+               SCREEN WRAP
+            --------------------------------------------- */
+
+            if (this.x < -20)
+                this.x = width + 20;
+
+            if (this.x > width + 20)
+                this.x = -20;
+
+            if (this.y < -20)
+                this.y = height + 20;
+
+            if (this.y > height + 20)
+                this.y = -20;
+
+
+            /* ---------------------------------------------
+               VERY SUBTLE MOUSE INTERACTION
+            --------------------------------------------- */
+
+            if (
+                mouse.x !== null &&
+                mouse.y !== null
+            ) {
+
+                const dx =
+                    this.x - mouse.x;
+
+                const dy =
+                    this.y - mouse.y;
+
+                const distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+
+                if (
+                    distance <
+                    settings.mouseInfluence
+                ) {
+
+                    const force =
+                        (settings.mouseInfluence - distance)
+                        / settings.mouseInfluence;
+
+
+                    this.x +=
+                        (dx / distance || 0)
+                        * force
+                        * 0.25;
+
+                    this.y +=
+                        (dy / distance || 0)
+                        * force
+                        * 0.25;
+
+                }
+
+            }
+
+
+            /* ---------------------------------------------
+               PULSE
+            --------------------------------------------- */
+
+            this.phase +=
+                settings.pulseSpeed;
+
+        }
+
+
+        draw() {
+
+            const glow =
+                (
+                    Math.sin(this.phase)
+                    + 1
+                ) / 2;
+
+
+            const alpha =
+                0.35 +
+                glow * 0.35;
+
+
+            /* Outer glow */
+
+            ctx.beginPath();
+
+            ctx.arc(
+                this.x,
+                this.y,
+                this.radius + glow * 3,
+                0,
+                Math.PI * 2
+            );
+
+
+            ctx.fillStyle =
+                `rgba(0, 220, 255, ${alpha * 0.12})`;
+
+            ctx.fill();
+
+
+            /* Actual node */
+
+            ctx.beginPath();
+
+            ctx.arc(
+                this.x,
+                this.y,
+                this.radius,
+                0,
+                Math.PI * 2
+            );
+
+
+            ctx.fillStyle =
+                `rgba(100, 235, 255, ${alpha})`;
+
+            ctx.fill();
+
+        }
+
+    }
+
+
+    /* -----------------------------------------------------
+       CREATE NODES
+    ----------------------------------------------------- */
+
+    const nodes = [];
+
+
+    for (
+        let i = 0;
+        i < settings.nodeCount;
+        i++
+    ) {
+
+        nodes.push(
+            new Node()
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       DRAW CONNECTIONS
+    ----------------------------------------------------- */
+
+    function drawConnections() {
+
+        for (
+            let i = 0;
+            i < nodes.length;
+            i++
+        ) {
+
+            for (
+                let j = i + 1;
+                j < nodes.length;
+                j++
+            ) {
+
+                const a =
+                    nodes[i];
+
+                const b =
+                    nodes[j];
+
+
+                const dx =
+                    a.x - b.x;
+
+                const dy =
+                    a.y - b.y;
+
+
+                const distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+
+                if (
+                    distance <
+                    settings.connectionDistance
+                ) {
+
+                    const strength =
+                        1 -
+                        (
+                            distance /
+                            settings.connectionDistance
+                        );
+
+
+                    /*
+                     * Keep the lines extremely
+                     * subtle so they don't
+                     * compete with content.
+                     */
+
+                    ctx.beginPath();
+
+                    ctx.moveTo(
+                        a.x,
+                        a.y
+                    );
+
+                    ctx.lineTo(
+                        b.x,
+                        b.y
+                    );
+
+
+                    ctx.strokeStyle =
+                        `rgba(
+                            0,
+                            190,
+                            230,
+                            ${strength * 0.11}
+                        )`;
+
+
+                    ctx.lineWidth =
+                        0.7;
+
+
+                    ctx.stroke();
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /* -----------------------------------------------------
+       OCCASIONAL SIGNAL PULSE
+    ----------------------------------------------------- */
+
+    let signalTimer = 0;
+
+    let signalNode = null;
+
+
+    function drawSignalPulse() {
+
+        if (!signalNode)
+            return;
+
+
+        signalTimer += 0.025;
+
+
+        const radius =
+            signalTimer * 90;
+
+
+        const alpha =
+            Math.max(
+                0,
+                0.22 -
+                signalTimer * 0.025
+            );
+
+
+        if (alpha <= 0) {
+
+            signalNode = null;
+            signalTimer = 0;
+
+            return;
+
+        }
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            signalNode.x,
+            signalNode.y,
+            radius,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.strokeStyle =
+            `rgba(
+                0,
+                220,
+                255,
+                ${alpha}
+            )`;
+
+
+        ctx.lineWidth =
+            1;
+
+
+        ctx.stroke();
+
+    }
+
+
+    /* -----------------------------------------------------
+       RANDOM SIGNAL
+    ----------------------------------------------------- */
+
+    setInterval(
+        () => {
+
+            if (
+                Math.random() <
+                0.7
+            ) {
+
+                signalNode =
+                    nodes[
+                        Math.floor(
+                            Math.random()
+                            * nodes.length
+                        )
+                    ];
+
+                signalTimer =
+                    0;
+
+            }
+
+        },
+        3500
+    );
+
+
+    /* -----------------------------------------------------
+       ANIMATION LOOP
+    ----------------------------------------------------- */
+
+    function animate() {
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        /* Connections first */
+
+        drawConnections();
+
+
+        /* Nodes */
+
+        nodes.forEach(
+            node => {
+
+                node.update();
+
+                node.draw();
+
+            }
+        );
+
+
+        /* Signal pulse */
+
+        drawSignalPulse();
+
+
+        requestAnimationFrame(
+            animate
+        );
+
+    }
+
+
+    animate();
+
+});
