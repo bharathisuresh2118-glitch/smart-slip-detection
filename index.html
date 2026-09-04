@@ -1,243 +1,406 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Smart Slip Detection and Alert System</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="style.css">
-    <title>Smart Slip Detection System | Arduino-Based Fall Detection</title>
+    <title>
+        Smart Slip Detection System | Arduino-Based Fall Detection
+    </title>
 
-    <meta name="description"
-      content="Smart Slip Detection System is a school science-expo project using Arduino UNO, MPU6050, PIR, ultrasonic sensing, LCD, buzzers and GSM alerts to detect possible slips and falls.">
+    <meta
+        name="description"
+        content="Smart Slip Detection System is a school science-expo project using Arduino UNO, MPU6050, PIR, ultrasonic sensing, LCD, buzzers and GSM alerts to detect possible slips and falls."
+    >
 
-    <meta name="keywords"
-      content="Smart Slip Detection System, slip detection, fall detection, Arduino project, MPU6050, science expo project">
+    <meta
+        name="keywords"
+        content="Smart Slip Detection System, slip detection, fall detection, Arduino project, MPU6050, science expo project"
+    >
 
-    <meta name="robots" content="index, follow">
+    <meta
+        name="robots"
+        content="index, follow"
+    >
 
-    <link rel="canonical"
-      href="https://bharathisuresh2118-glitch.github.io/smart-slip-detection/">
+    <link
+        rel="canonical"
+        href="https://bharathisuresh2118-glitch.github.io/smart-slip-detection/"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
+
 
 <body>
 
-    <!-- Navigation -->
-     <!-- =========================================
+
+<!-- =====================================================
      NAVIGATION
-========================================= -->
+===================================================== -->
 
 <header class="navbar">
 
-    <a href="#" class="nav-logo">
+    <a
+        href="#"
+        class="nav-logo"
+    >
+
         <span class="logo-mark">
             <span></span>
         </span>
 
         <span class="logo-text">
+
             SMART SLIP
-            <small>SAFETY SYSTEM</small>
+
+            <small>
+                SAFETY SYSTEM
+            </small>
+
         </span>
+
     </a>
 
 
     <nav class="nav-links">
 
         <a href="#problem">
-           
             Problem
         </a>
 
         <a href="#solution">
-           
             Solution
         </a>
 
         <a href="#how-it-works">
-        
             Process
         </a>
 
         <a href="#components">
-           
             Hardware
         </a>
 
         <a href="#science">
-           
             Science
         </a>
 
         <a href="#video">
-            Project Video</a>
+            Project Video
+        </a>
 
     </nav>
 
 
-    <a href="#project" class="nav-button">
-        <span>View Project</span>
-        <b>↗</b>
+    <a
+        href="#project"
+        class="nav-button"
+    >
+
+        <span>
+            View Project
+        </span>
+
+        <b>
+            ↗
+        </b>
+
     </a>
 
 </header>
 
 
-    <!-- Hero Section -->
-    <main>
 
-        <section class="hero">
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
-            <!-- Background decoration -->
-            <div class="hero-glow glow-one"></div>
-            <div class="hero-glow glow-two"></div>
+<main>
 
-            <div class="hero-content">
 
-                <div class="status-badge">
-                    <span class="status-dot"></span>
-                    SAFETY TECHNOLOGY PROJECT
-                </div>
+<!-- =====================================================
+     HERO
+===================================================== -->
 
-                <h1>
-                    Smart Slip
-                    <span>Detection</span>
-                    & Alert System
-                </h1>
+<section class="hero">
 
-                <p class="hero-description">
-                    An intelligent safety system designed to detect possible
-                    slips and falls using motion and impact sensing, then
-                    automatically trigger alerts when an emergency is confirmed.
-                </p>
+    <div class="hero-glow glow-one"></div>
 
-                <div class="hero-buttons">
-                    <a href="#how-it-works" class="primary-button">
-                        Explore the System
-                        <span>→</span>
-                    </a>
+    <div class="hero-glow glow-two"></div>
 
-                    <a href="#science" class="secondary-button">
-                        Discover the Science
-                    </a>
-                </div>
 
-                <div class="hero-stats">
+    <div class="hero-content">
 
-                    <div class="stat">
-                        
-                        <span>Impact Detection</span>
-                    </div>
 
-                    <div class="stat">
-                     
-                        <span>Movement Analysis</span>
-                    </div>
+        <div class="status-badge">
 
-                    <div class="stat">
-                      
-                        <span>Emergency Alert</span>
-                    </div>
+            <span class="status-dot"></span>
 
-                </div>
+            SAFETY TECHNOLOGY PROJECT
+
+        </div>
+
+
+        <h1>
+
+            Smart Slip
+
+            <span>
+                Detection
+            </span>
+
+            & Alert System
+
+        </h1>
+
+
+        <p class="hero-description">
+
+            An intelligent safety system designed to detect
+            possible slips and falls using motion and impact
+            sensing, then automatically trigger alerts when
+            an emergency is confirmed.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <a
+                href="#how-it-works"
+                class="primary-button"
+            >
+
+                Explore the System
+
+                <span>
+                    →
+                </span>
+
+            </a>
+
+
+            <a
+                href="#science"
+                class="secondary-button"
+            >
+
+                Discover the Science
+
+            </a>
+
+        </div>
+
+
+        <div class="hero-stats">
+
+            <div class="stat">
+
+                <span>
+                    Impact Detection
+                </span>
 
             </div>
 
 
-            <!-- System Visualization -->
-            <div class="system-visual">
+            <div class="stat">
 
-                <div class="orbit orbit-one"></div>
-                <div class="orbit orbit-two"></div>
+                <span>
+                    Movement Analysis
+                </span>
 
-                <div class="sensor-card">
-
-                    <div class="sensor-top">
-                        <span>LIVE SENSOR</span>
-                        <span class="live-indicator">● LIVE</span>
-                    </div>
-
-                    <div class="sensor-icon">
-                        MPU
-                    </div>
-
-                    <h3>MPU6050</h3>
-                    <p>Motion & Impact Sensor</p>
-
-                    <div class="sensor-data">
-
-                        <div>
-                            <span>ACCELERATION</span>
-                            <strong>1.02 g</strong>
-                        </div>
-
-                        <div>
-                            <span>GYROSCOPE</span>
-                            <strong>0.08 rad/s</strong>
-                        </div>
-
-                    </div>
-
-                    <div class="signal">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
-                    <div class="sensor-status">
-                        <span class="status-dot"></span>
-                        SYSTEM MONITORING
-                    </div>
-
-                </div>
+            </div>
 
 
-                <div class="floating-chip chip-arduino">
-                    <span>●</span>
-                    Arduino Uno
-                </div>
+            <div class="stat">
 
-                <div class="floating-chip chip-alert">
-                    <span>!</span>
+                <span>
                     Emergency Alert
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SYSTEM VISUAL -->
+
+    <div class="system-visual">
+
+        <div class="orbit orbit-one"></div>
+
+        <div class="orbit orbit-two"></div>
+
+
+        <div class="sensor-card">
+
+            <div class="sensor-top">
+
+                <span>
+                    LIVE SENSOR
+                </span>
+
+                <span class="live-indicator">
+                    ● LIVE
+                </span>
+
+            </div>
+
+
+            <div class="sensor-icon">
+                MPU
+            </div>
+
+
+            <h3>
+                MPU6050
+            </h3>
+
+
+            <p>
+                Motion & Impact Sensor
+            </p>
+
+
+            <div class="sensor-data">
+
+                <div>
+
+                    <span>
+                        ACCELERATION
+                    </span>
+
+                    <strong>
+                        1.02 g
+                    </strong>
+
                 </div>
 
-                <div class="floating-chip chip-gsm">
-                    <span>↗</span>
-                    GSM Connected
+
+                <div>
+
+                    <span>
+                        GYROSCOPE
+                    </span>
+
+                    <strong>
+                        0.08 rad/s
+                    </strong>
+
                 </div>
 
             </div>
 
-        </section>
+
+            <div class="signal">
+
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </div>
 
 
-        <!-- =========================================
-     PROBLEM SECTION
-========================================= -->
+            <div class="sensor-status">
 
-<section id="problem" class="problem-section">
+                <span class="status-dot"></span>
+
+                SYSTEM MONITORING
+
+            </div>
+
+        </div>
+
+
+        <div class="floating-chip chip-arduino">
+
+            <span>
+                ●
+            </span>
+
+            Arduino Uno
+
+        </div>
+
+
+        <div class="floating-chip chip-alert">
+
+            <span>
+                !
+            </span>
+
+            Emergency Alert
+
+        </div>
+
+
+        <div class="floating-chip chip-gsm">
+
+            <span>
+                ↗
+            </span>
+
+            GSM Connected
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PROBLEM
+===================================================== -->
+
+<section
+    id="problem"
+    class="problem-section"
+>
 
     <div class="section-heading">
 
         <div class="section-label">
-             THE PROBLEM
+            THE PROBLEM
         </div>
 
+
         <h2>
+
             When a wet floor
-            becomes a <span>real danger.</span>
+            becomes a
+            <span>real danger.</span>
+
         </h2>
 
+
         <p>
+
             A sudden slip or fall can happen within seconds.
             In places such as bathrooms, a person may need
-            assistance before they are able to call for it themselves.
+            assistance before they are able to call for it
+            themselves.
+
         </p>
 
     </div>
@@ -245,49 +408,76 @@
 
     <div class="problem-grid">
 
+
         <div class="problem-card">
 
-            <div class="problem-number">01</div>
+            <div class="problem-number">
+                01
+            </div>
 
-            <div class="problem-icon">◌</div>
+            <div class="problem-icon">
+                ◌
+            </div>
 
-            <h3>Wet Surfaces</h3>
+            <h3>
+                Wet Surfaces
+            </h3>
 
             <p>
+
                 Water on a floor can reduce friction and make
                 walking surfaces more hazardous.
+
             </p>
 
         </div>
 
 
+
         <div class="problem-card">
 
-            <div class="problem-number">02</div>
+            <div class="problem-number">
+                02
+            </div>
 
-            <div class="problem-icon">↯</div>
+            <div class="problem-icon">
+                ↯
+            </div>
 
-            <h3>Sudden Incidents</h3>
+            <h3>
+                Sudden Incidents
+            </h3>
 
             <p>
+
                 A slip or fall can happen unexpectedly,
                 leaving very little time to react.
+
             </p>
 
         </div>
 
 
+
         <div class="problem-card">
 
-            <div class="problem-number">03</div>
+            <div class="problem-number">
+                03
+            </div>
 
-            <div class="problem-icon">!</div>
+            <div class="problem-icon">
+                !
+            </div>
 
-            <h3>Delayed Assistance</h3>
+            <h3>
+                Delayed Assistance
+            </h3>
 
             <p>
+
                 If nobody notices an incident, getting help
                 may take longer than necessary.
+
             </p>
 
         </div>
@@ -297,24 +487,34 @@
 </section>
 
 
-<!-- =========================================
-     SOLUTION SECTION
-========================================= -->
 
-<section id="solution" class="solution-section">
+<!-- =====================================================
+     SOLUTION
+===================================================== -->
+
+<section
+    id="solution"
+    class="solution-section"
+>
+
 
     <div class="solution-visual">
 
         <div class="solution-ring ring-large"></div>
+
         <div class="solution-ring ring-medium"></div>
+
 
         <div class="solution-core">
 
             <div class="core-pulse"></div>
 
-            <span>SS</span>
+            <span>
+                SS
+            </span>
 
         </div>
+
 
         <div class="solution-node node-top">
             MPU6050
@@ -335,50 +535,90 @@
     </div>
 
 
+
     <div class="solution-content">
 
         <div class="section-label">
-           OUR SOLUTION
+            OUR SOLUTION
         </div>
 
+
         <h2>
+
             Detection that goes
-            beyond <span>vibration.</span>
+            beyond
+            <span>vibration.</span>
+
         </h2>
 
+
         <p>
+
             The Smart Slip Detection and Alert System uses
             an MPU6050 accelerometer and gyroscope to monitor
             movement and detect significant changes associated
             with sudden impact.
+
         </p>
 
+
         <p>
+
             Instead of treating every vibration as an emergency,
             the system checks movement and stability after an
             impact before confirming a possible slip or fall.
+
         </p>
 
 
         <div class="solution-flow">
 
             <div>
-                <strong>01</strong>
-                <span>Detect Impact</span>
+
+                <strong>
+                    01
+                </strong>
+
+                <span>
+                    Detect Impact
+                </span>
+
             </div>
 
-            <div class="flow-arrow">→</div>
 
-            <div>
-                <strong>02</strong>
-                <span>Analyze Movement</span>
+            <div class="flow-arrow">
+                →
             </div>
 
-            <div class="flow-arrow">→</div>
 
             <div>
-                <strong>03</strong>
-                <span>Confirm Event</span>
+
+                <strong>
+                    02
+                </strong>
+
+                <span>
+                    Analyze Movement
+                </span>
+
+            </div>
+
+
+            <div class="flow-arrow">
+                →
+            </div>
+
+
+            <div>
+
+                <strong>
+                    03
+                </strong>
+
+                <span>
+                    Confirm Event
+                </span>
+
             </div>
 
         </div>
@@ -387,55 +627,79 @@
 
 </section>
 
-<!-- =========================================
-     HOW IT WORKS
-========================================= -->
 
-<section id="how-it-works" class="how-section">
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<section
+    id="how-it-works"
+    class="how-section"
+>
+
 
     <div class="how-heading">
 
         <div class="section-label">
-           HOW IT WORKS
+            HOW IT WORKS
         </div>
 
+
         <h2>
+
             From sudden impact
-            to <span>emergency alert.</span>
+            to
+            <span>emergency alert.</span>
+
         </h2>
 
+
         <p>
+
             The system follows a multi-stage detection process
             instead of treating every movement or vibration as
             a possible fall.
+
         </p>
 
     </div>
 
 
-    <!-- Detection Pipeline -->
 
     <div class="detection-pipeline">
 
-        <!-- STEP 01 -->
 
         <div class="detection-step active">
 
             <div class="step-top">
-                <span>01</span>
+
+                <span>
+                    01
+                </span>
+
                 <div class="step-line"></div>
+
             </div>
+
 
             <div class="step-icon">
                 ◉
             </div>
 
-            <h3>Monitor</h3>
+
+            <h3>
+                Monitor
+            </h3>
+
 
             <p>
+
                 The sensors continuously monitor
                 movement and human presence.
+
             </p>
+
 
             <div class="step-sensor">
                 MPU6050 + PIR
@@ -444,25 +708,37 @@
         </div>
 
 
-        <!-- STEP 02 -->
 
         <div class="detection-step">
 
             <div class="step-top">
-                <span>02</span>
+
+                <span>
+                    02
+                </span>
+
                 <div class="step-line"></div>
+
             </div>
+
 
             <div class="step-icon impact-icon">
                 ↯
             </div>
 
-            <h3>Impact Detected</h3>
+
+            <h3>
+                Impact Detected
+            </h3>
+
 
             <p>
+
                 The MPU6050 detects a significant
                 sudden change associated with impact.
+
             </p>
+
 
             <div class="step-sensor">
                 ACCELERATION
@@ -471,25 +747,37 @@
         </div>
 
 
-        <!-- STEP 03 -->
 
         <div class="detection-step">
 
             <div class="step-top">
-                <span>03</span>
+
+                <span>
+                    03
+                </span>
+
                 <div class="step-line"></div>
+
             </div>
+
 
             <div class="step-icon">
                 ◌
             </div>
 
-            <h3>Movement Check</h3>
+
+            <h3>
+                Movement Check
+            </h3>
+
 
             <p>
+
                 The system analyzes movement and
                 stability after the impact.
+
             </p>
+
 
             <div class="step-sensor">
                 GYROSCOPE
@@ -498,25 +786,37 @@
         </div>
 
 
-        <!-- STEP 04 -->
 
         <div class="detection-step">
 
             <div class="step-top">
-                <span>04</span>
+
+                <span>
+                    04
+                </span>
+
                 <div class="step-line"></div>
+
             </div>
+
 
             <div class="step-icon confirm-icon">
                 ✓
             </div>
 
-            <h3>Confirm</h3>
+
+            <h3>
+                Confirm
+            </h3>
+
 
             <p>
+
                 Multiple conditions are evaluated
                 before a possible emergency is confirmed.
+
             </p>
+
 
             <div class="step-sensor">
                 ANALYSIS
@@ -525,25 +825,37 @@
         </div>
 
 
-        <!-- STEP 05 -->
 
         <div class="detection-step">
 
             <div class="step-top">
-                <span>05</span>
+
+                <span>
+                    05
+                </span>
+
                 <div class="step-line"></div>
+
             </div>
+
 
             <div class="step-icon alert-icon">
                 !
             </div>
 
-            <h3>Local Alert</h3>
+
+            <h3>
+                Local Alert
+            </h3>
+
 
             <p>
+
                 The LCD displays the alert and
                 both buzzers provide a local warning.
+
             </p>
+
 
             <div class="step-sensor">
                 LCD + BUZZERS
@@ -552,24 +864,35 @@
         </div>
 
 
-        <!-- STEP 06 -->
 
         <div class="detection-step last-step">
 
             <div class="step-top">
-                <span>06</span>
+
+                <span>
+                    06
+                </span>
+
             </div>
+
 
             <div class="step-icon gsm-icon">
                 ↗
             </div>
 
-            <h3>GSM Alert</h3>
+
+            <h3>
+                GSM Alert
+            </h3>
+
 
             <p>
+
                 The SIM900A can send an emergency
                 SMS/call when configured.
+
             </p>
+
 
             <div class="step-sensor">
                 SIM900A
@@ -579,10 +902,7 @@
 
     </div>
 
-    
 
-
-    <!-- Detection Principle -->
 
     <div class="detection-principle">
 
@@ -590,87 +910,123 @@
             !
         </div>
 
+
         <div>
+
             <strong>
                 Designed to reduce false alarms
             </strong>
 
+
             <p>
+
                 Ordinary vibration alone should not immediately
                 trigger an emergency. The system evaluates a
                 significant impact together with subsequent
                 movement or stability before confirming a
                 possible slip or fall.
+
             </p>
+
         </div>
 
     </div>
 
 </section>
 
-<!-- =========================================
-     HARDWARE SECTION
-========================================= -->
 
-<section id="components" class="hardware-section">
+
+<!-- =====================================================
+     HARDWARE
+===================================================== -->
+
+<section
+    id="components"
+    class="hardware-section"
+>
+
 
     <div class="hardware-heading">
 
         <div class="section-label">
-           THE HARDWARE
+            THE HARDWARE
         </div>
 
+
         <h2>
+
             The technology
-            behind the <span>system.</span>
+            behind the
+            <span>system.</span>
+
         </h2>
 
+
         <p>
+
             Each component has a specific role in detecting,
             analyzing, displaying, and communicating a possible
             emergency.
+
         </p>
 
     </div>
 
 
-    <!-- Hardware Grid -->
 
     <div class="hardware-grid">
 
-        <!-- Arduino -->
 
-        <article class="hardware-card ">
+        <!-- ARDUINO -->
+
+        <article class="hardware-card">
 
             <div class="hardware-number">
                 01
             </div>
 
+
             <div class="hardware-icon arduino-icon">
                 UNO
             </div>
+
 
             <div class="hardware-tag">
                 MAIN CONTROLLER
             </div>
 
-            <h3>Arduino Uno</h3>
+
+            <h3>
+                Arduino Uno
+            </h3>
+
 
             <p>
+
                 The central controller of the system. It receives
                 sensor data, processes the detection conditions,
                 and controls the alert devices.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>PROCESSING</span>
-                <span>● ACTIVE</span>
+
+                <span>
+                    PROCESSING
+                </span>
+
+                <span>
+                    ● ACTIVE
+                </span>
+
             </div>
 
         </article>
 
 
-        <!-- MPU6050 -->
+
+        <!-- MPU -->
 
         <article class="hardware-card">
 
@@ -678,28 +1034,45 @@
                 02
             </div>
 
+
             <div class="hardware-icon">
                 MPU
             </div>
+
 
             <div class="hardware-tag">
                 MOTION SENSOR
             </div>
 
-            <h3>MPU6050</h3>
+
+            <h3>
+                MPU6050
+            </h3>
+
 
             <p>
+
                 Combines an accelerometer and gyroscope to
                 measure changes in acceleration, rotation,
                 and movement.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>ACCEL + GYRO</span>
-                <span>● ACTIVE</span>
+
+                <span>
+                    ACCEL + GYRO
+                </span>
+
+                <span>
+                    ● ACTIVE
+                </span>
+
             </div>
 
         </article>
+
 
 
         <!-- PIR -->
@@ -710,28 +1083,45 @@
                 03
             </div>
 
+
             <div class="hardware-icon">
                 PIR
             </div>
+
 
             <div class="hardware-tag">
                 PRESENCE SENSOR
             </div>
 
-            <h3>PIR Sensor</h3>
+
+            <h3>
+                PIR Sensor
+            </h3>
+
 
             <p>
+
                 Detects human motion or presence and provides
                 additional information about activity around
                 the system.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>MOTION</span>
-                <span>● ACTIVE</span>
+
+                <span>
+                    MOTION
+                </span>
+
+                <span>
+                    ● ACTIVE
+                </span>
+
             </div>
 
         </article>
+
 
 
         <!-- LCD -->
@@ -742,32 +1132,47 @@
                 04
             </div>
 
+
             <div class="hardware-icon lcd-icon">
                 LCD
             </div>
+
 
             <div class="hardware-tag">
                 USER DISPLAY
             </div>
 
-            <h3>LCD Display</h3>
+
+            <h3>
+                LCD Display
+            </h3>
+
 
             <p>
+
                 Displays the current system status, detection
                 messages, and emergency notifications.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>STATUS</span>
-                <span>● ONLINE</span>
+
+                <span>
+                    STATUS
+                </span>
+
+                <span>
+                    ● ONLINE
+                </span>
+
             </div>
 
         </article>
 
-        
 
 
-        <!-- Main Buzzer -->
+        <!-- MAIN BUZZER -->
 
         <article class="hardware-card">
 
@@ -775,30 +1180,47 @@
                 05
             </div>
 
+
             <div class="hardware-icon buzzer-icon">
                 🔊
             </div>
+
 
             <div class="hardware-tag">
                 LOCAL ALERT
             </div>
 
-            <h3>Main Buzzer</h3>
+
+            <h3>
+                Main Buzzer
+            </h3>
+
 
             <p>
+
                 Provides the primary audible warning when
                 a possible emergency has been confirmed.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>ALARM</span>
-                <span>● READY</span>
+
+                <span>
+                    ALARM
+                </span>
+
+                <span>
+                    ● READY
+                </span>
+
             </div>
 
         </article>
 
 
-        <!-- Micro Buzzer -->
+
+        <!-- MICRO BUZZER -->
 
         <article class="hardware-card">
 
@@ -806,30 +1228,47 @@
                 06
             </div>
 
+
             <div class="hardware-icon buzzer-icon">
                 ♪
             </div>
+
 
             <div class="hardware-tag">
                 ADDITIONAL ALERT
             </div>
 
-            <h3>Micro-Buzzer</h3>
+
+            <h3>
+                Micro-Buzzer
+            </h3>
+
 
             <p>
+
                 Provides an additional audible alert alongside
                 the main buzzer during an emergency.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>ALARM</span>
-                <span>● READY</span>
+
+                <span>
+                    ALARM
+                </span>
+
+                <span>
+                    ● READY
+                </span>
+
             </div>
 
         </article>
 
 
-        <!-- Push Button -->
+
+        <!-- BUTTON -->
 
         <article class="hardware-card">
 
@@ -837,30 +1276,47 @@
                 07
             </div>
 
+
             <div class="hardware-icon button-icon">
                 ●
             </div>
+
 
             <div class="hardware-tag">
                 MANUAL CONTROL
             </div>
 
-            <h3>Push Button</h3>
+
+            <h3>
+                Push Button
+            </h3>
+
 
             <p>
+
                 Allows the user to manually cancel or reset
                 the alarm after an alert.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>RESET</span>
-                <span>● READY</span>
+
+                <span>
+                    RESET
+                </span>
+
+                <span>
+                    ● READY
+                </span>
+
             </div>
 
         </article>
 
 
-        <!-- SIM900A -->
+
+        <!-- GSM -->
 
         <article class="hardware-card gsm-card">
 
@@ -868,62 +1324,103 @@
                 08
             </div>
 
+
             <div class="hardware-icon gsm-hardware-icon">
                 GSM
             </div>
+
 
             <div class="hardware-tag">
                 WIRELESS COMMUNICATION
             </div>
 
-            <h3>SIM900A GSM</h3>
+
+            <h3>
+                SIM900A GSM
+            </h3>
+
 
             <p>
+
                 Provides cellular communication so the system
                 can send an emergency SMS or call when properly
                 configured.
+
             </p>
 
+
             <div class="hardware-footer">
-                <span>COMMUNICATION</span>
-                <span>● READY</span>
+
+                <span>
+                    COMMUNICATION
+                </span>
+
+                <span>
+                    ● READY
+                </span>
+
             </div>
 
         </article>
 
-    
 
-     <!-- Ultrasonic Sensor -->
 
-<article class="hardware-card">
+        <!-- ULTRASONIC -->
 
-    <div class="hardware-icon ultrasonic-icon">
-        📏
+        <article class="hardware-card">
+
+            <div class="hardware-number">
+                09
+            </div>
+
+
+            <div class="hardware-icon ultrasonic-icon">
+                📏
+            </div>
+
+
+            <div class="hardware-tag">
+                DISTANCE SENSOR
+            </div>
+
+
+            <h3>
+                Ultrasonic Sensor
+            </h3>
+
+
+            <p>
+
+                Measures the distance between the sensor and
+                nearby objects. It helps determine whether a
+                person is close to the floor after a possible
+                slip or fall.
+
+            </p>
+
+
+            <div class="hardware-footer">
+
+                <span>
+                    DISTANCE
+                </span>
+
+                <span>
+                    ● ACTIVE
+                </span>
+
+            </div>
+
+        </article>
+
     </div>
 
-    <div class="hardware-tag">
-        DISTANCE SENSOR
-    </div>
-
-    <h3>Ultrasonic Sensor</h3>
-
-    <p>
-        Measures the distance between the sensor and nearby
-        objects. It helps determine whether a person is close
-        to the floor after a possible slip or fall.
-    </p>
-
-    <div class="hardware-footer">
-        <span>DISTANCE</span>
-        <span>● ACTIVE</span>
-    </div>
-
-</article>
 
 
-    <!-- System Core -->
+    <!-- SYSTEM CORE -->
 
     <div class="hardware-core">
+
 
         <div class="core-heading">
 
@@ -931,9 +1428,13 @@
                 SYSTEM CORE
             </div>
 
+
             <h3>
+
                 Everything connects
-                through the <span>Arduino.</span>
+                through the
+                <span>Arduino.</span>
+
             </h3>
 
         </div>
@@ -941,16 +1442,28 @@
 
         <div class="core-flow">
 
+
             <div class="core-group sensors-group">
 
                 <div class="core-item">
+
                     MPU6050
-                    <small>IMPACT + MOTION</small>
+
+                    <small>
+                        IMPACT + MOTION
+                    </small>
+
                 </div>
 
+
                 <div class="core-item">
+
                     PIR
-                    <small>HUMAN MOTION</small>
+
+                    <small>
+                        HUMAN MOTION
+                    </small>
+
                 </div>
 
             </div>
@@ -962,8 +1475,15 @@
 
 
             <div class="core-controller">
-                <strong>ARDUINO</strong>
-                <span>UNO</span>
+
+                <strong>
+                    ARDUINO
+                </strong>
+
+                <span>
+                    UNO
+                </span>
+
             </div>
 
 
@@ -975,18 +1495,35 @@
             <div class="core-group output-group">
 
                 <div class="core-item">
+
                     LCD
-                    <small>DISPLAY</small>
+
+                    <small>
+                        DISPLAY
+                    </small>
+
                 </div>
 
+
                 <div class="core-item">
+
                     BUZZERS
-                    <small>LOCAL ALERT</small>
+
+                    <small>
+                        LOCAL ALERT
+                    </small>
+
                 </div>
 
+
                 <div class="core-item">
+
                     SIM900A
-                    <small>GSM ALERT</small>
+
+                    <small>
+                        GSM ALERT
+                    </small>
+
                 </div>
 
             </div>
@@ -997,44 +1534,65 @@
 
 </section>
 
-<!-- =========================================
-     SCIENCE SECTION
-========================================= -->
 
-<section id="science" class="science-section">
+
+<!-- =====================================================
+     SCIENCE
+===================================================== -->
+
+<section
+    id="science"
+    class="science-section"
+>
+
 
     <div class="science-heading">
 
         <div class="section-label">
-           THE SCIENCE
+            THE SCIENCE
         </div>
 
+
         <h2>
+
             Turning movement
-            into <span>meaningful data.</span>
+            into
+            <span>meaningful data.</span>
+
         </h2>
 
+
         <p>
+
             The system uses physics and sensor measurements to
             identify sudden changes in movement and evaluate
             whether they could indicate a possible slip or fall.
+
         </p>
 
     </div>
 
 
-    <!-- Science Grid -->
 
     <div class="science-grid">
 
-        <!-- Acceleration -->
+
+        <!-- ACCELERATION -->
 
         <article class="science-card large-science-card">
 
             <div class="science-card-top">
-                <span class="science-index">01</span>
-                <span class="science-category">ACCELEROMETER</span>
+
+                <span class="science-index">
+                    01
+                </span>
+
+                <span class="science-category">
+                    ACCELEROMETER
+                </span>
+
             </div>
+
 
             <div class="axis-visual">
 
@@ -1056,35 +1614,59 @@
 
             </div>
 
-            <h3>Acceleration</h3>
+
+            <h3>
+                Acceleration
+            </h3>
+
 
             <p>
+
                 The accelerometer measures changes in acceleration
                 along the X, Y, and Z axes. A sudden change can
                 indicate that a significant movement or impact
                 has occurred.
+
             </p>
 
+
             <div class="science-equation">
-                <span>Acceleration</span>
-                <strong>a = Δv / Δt</strong>
+
+                <span>
+                    Acceleration
+                </span>
+
+                <strong>
+                    a = Δv / Δt
+                </strong>
+
             </div>
 
         </article>
 
 
-        <!-- Gyroscope -->
+
+        <!-- GYROSCOPE -->
 
         <article class="science-card">
 
             <div class="science-card-top">
-                <span class="science-index">02</span>
-                <span class="science-category">GYROSCOPE</span>
+
+                <span class="science-index">
+                    02
+                </span>
+
+                <span class="science-category">
+                    GYROSCOPE
+                </span>
+
             </div>
+
 
             <div class="gyro-visual">
 
                 <div class="gyro-ring ring-a"></div>
+
                 <div class="gyro-ring ring-b"></div>
 
                 <div class="gyro-core">
@@ -1093,29 +1675,45 @@
 
             </div>
 
-            <h3>Rotation & Orientation</h3>
+
+            <h3>
+                Rotation & Orientation
+            </h3>
+
 
             <p>
+
                 The gyroscope measures rotational movement.
                 This helps the system observe changes in the
                 sensor's orientation and movement.
+
             </p>
 
         </article>
 
 
-        <!-- Impact -->
+
+        <!-- IMPACT -->
 
         <article class="science-card impact-science-card">
 
             <div class="science-card-top">
-                <span class="science-index">03</span>
-                <span class="science-category">IMPACT ANALYSIS</span>
+
+                <span class="science-index">
+                    03
+                </span>
+
+                <span class="science-category">
+                    IMPACT ANALYSIS
+                </span>
+
             </div>
+
 
             <div class="impact-graph">
 
                 <div class="graph-line">
+
                     <span></span>
                     <span></span>
                     <span></span>
@@ -1125,40 +1723,70 @@
                     <span></span>
                     <span></span>
                     <span></span>
+
                 </div>
 
+
                 <div class="graph-labels">
-                    <span>NORMAL</span>
-                    <span>IMPACT</span>
-                    <span>AFTER EVENT</span>
+
+                    <span>
+                        NORMAL
+                    </span>
+
+                    <span>
+                        IMPACT
+                    </span>
+
+                    <span>
+                        AFTER EVENT
+                    </span>
+
                 </div>
 
             </div>
 
-            <h3>Detecting Significant Impact</h3>
+
+            <h3>
+                Detecting Significant Impact
+            </h3>
+
 
             <p>
+
                 The system looks for a sudden, significant change
                 rather than reacting to every small vibration.
+
             </p>
 
         </article>
 
 
-        <!-- Movement -->
+
+        <!-- STABILITY -->
 
         <article class="science-card">
 
             <div class="science-card-top">
-                <span class="science-index">04</span>
-                <span class="science-category">STABILITY</span>
+
+                <span class="science-index">
+                    04
+                </span>
+
+                <span class="science-category">
+                    STABILITY
+                </span>
+
             </div>
+
 
             <div class="stability-visual">
 
                 <div class="stability-circle">
+
                     <div></div>
+
                 </div>
+
 
                 <span class="stable-label">
                     MOVEMENT CHECK
@@ -1166,13 +1794,19 @@
 
             </div>
 
-            <h3>Movement & Stability</h3>
+
+            <h3>
+                Movement & Stability
+            </h3>
+
 
             <p>
+
                 After an impact is detected, the system checks
                 subsequent movement and stability before deciding
                 whether the event should be treated as a possible
                 emergency.
+
             </p>
 
         </article>
@@ -1180,7 +1814,6 @@
     </div>
 
 
-    <!-- Core Principle -->
 
     <div class="science-principle">
 
@@ -1188,35 +1821,63 @@
             ∑
         </div>
 
+
         <div class="science-principle-content">
 
             <div class="section-label">
                 DETECTION PRINCIPLE
             </div>
 
+
             <h3>
+
                 One sensor reading isn't
                 the whole story.
+
             </h3>
 
+
             <p>
+
                 The project combines impact information with
                 movement and stability checks. This approach is
                 intended to reduce false alarms caused by ordinary
                 vibration or minor movement.
+
             </p>
 
         </div>
 
+
         <div class="principle-flow">
 
-            <span>IMPACT</span>
-            <b>+</b>
-            <span>MOVEMENT</span>
-            <b>+</b>
-            <span>STABILITY</span>
-            <b>→</b>
-            <strong>POSSIBLE FALL</strong>
+            <span>
+                IMPACT
+            </span>
+
+            <b>
+                +
+            </b>
+
+            <span>
+                MOVEMENT
+            </span>
+
+            <b>
+                +
+            </b>
+
+            <span>
+                STABILITY
+            </span>
+
+            <b>
+                →
+            </b>
+
+            <strong>
+                POSSIBLE FALL
+            </strong>
 
         </div>
 
@@ -1224,11 +1885,17 @@
 
 </section>
 
-<!-- =========================================
-     EMERGENCY ALERT SECTION
-========================================= -->
 
-<section id="emergency" class="emergency-section">
+
+<!-- =====================================================
+     EMERGENCY
+===================================================== -->
+
+<section
+    id="emergency"
+    class="emergency-section"
+>
+
 
     <div class="emergency-heading">
 
@@ -1236,27 +1903,34 @@
             06 / EMERGENCY ALERT
         </div>
 
+
         <h2>
+
             When an incident is confirmed,
             <span>help gets notified.</span>
+
         </h2>
 
+
         <p>
+
             Once the system confirms a possible emergency,
             it activates local alerts and can use the SIM900A
             GSM module to communicate with an emergency contact.
+
         </p>
 
     </div>
 
 
-    <!-- Alert Status -->
 
     <div class="alert-status">
 
         <div class="status-indicator"></div>
 
+
         <div>
+
             <span class="status-label">
                 SYSTEM STATUS
             </span>
@@ -1264,7 +1938,9 @@
             <strong>
                 EMERGENCY RESPONSE READY
             </strong>
+
         </div>
+
 
         <div class="status-pulse">
             MONITORING
@@ -1273,11 +1949,9 @@
     </div>
 
 
-    <!-- Emergency Flow -->
 
     <div class="emergency-flow">
 
-        <!-- Confirm -->
 
         <div class="emergency-stage">
 
@@ -1289,11 +1963,15 @@
                 01
             </span>
 
-            <h3>Fall Confirmed</h3>
+            <h3>
+                Fall Confirmed
+            </h3>
 
             <p>
+
                 The detection logic identifies conditions
                 consistent with a possible slip or fall.
+
             </p>
 
         </div>
@@ -1303,8 +1981,6 @@
             →
         </div>
 
-
-        <!-- Arduino -->
 
         <div class="emergency-stage">
 
@@ -1316,11 +1992,15 @@
                 02
             </span>
 
-            <h3>Arduino Processes</h3>
+            <h3>
+                Arduino Processes
+            </h3>
 
             <p>
+
                 The Arduino coordinates the local alarm,
                 display, and communication response.
+
             </p>
 
         </div>
@@ -1330,8 +2010,6 @@
             →
         </div>
 
-
-        <!-- Local Alert -->
 
         <div class="emergency-stage local-stage">
 
@@ -1343,18 +2021,31 @@
                 03
             </span>
 
-            <h3>Local Alert</h3>
+            <h3>
+                Local Alert
+            </h3>
 
             <p>
+
                 The LCD displays the emergency status while
                 both buzzers provide an audible warning.
+
             </p>
+
 
             <div class="alert-mini-row">
 
-                <span>LCD</span>
-                <span>MAIN</span>
-                <span>MICRO</span>
+                <span>
+                    LCD
+                </span>
+
+                <span>
+                    MAIN
+                </span>
+
+                <span>
+                    MICRO
+                </span>
 
             </div>
 
@@ -1366,8 +2057,6 @@
         </div>
 
 
-        <!-- GSM -->
-
         <div class="emergency-stage gsm-stage">
 
             <div class="emergency-icon gsm-stage-icon">
@@ -1378,17 +2067,25 @@
                 04
             </span>
 
-            <h3>GSM Communication</h3>
+            <h3>
+                GSM Communication
+            </h3>
 
             <p>
+
                 The SIM900A can send an emergency SMS or call
                 when connected to a supported cellular network
                 and properly configured.
+
             </p>
 
+
             <div class="network-status">
+
                 <span class="network-dot"></span>
+
                 CELLULAR LINK
+
             </div>
 
         </div>
@@ -1396,16 +2093,24 @@
     </div>
 
 
-    <!-- Communication Panel -->
 
     <div class="communication-panel">
+
 
         <div class="communication-screen">
 
             <div class="screen-top">
-                <span>SIM900A / GSM</span>
-                <span>● CONNECTED</span>
+
+                <span>
+                    SIM900A / GSM
+                </span>
+
+                <span>
+                    ● CONNECTED
+                </span>
+
             </div>
+
 
             <div class="screen-message">
 
@@ -1423,13 +2128,25 @@
 
             </div>
 
+
             <div class="screen-bottom">
-                <span>SMS</span>
-                <span>CALL</span>
-                <span>ALERT READY</span>
+
+                <span>
+                    SMS
+                </span>
+
+                <span>
+                    CALL
+                </span>
+
+                <span>
+                    ALERT READY
+                </span>
+
             </div>
 
         </div>
+
 
 
         <div class="communication-info">
@@ -1438,25 +2155,39 @@
                 COMMUNICATION LAYER
             </div>
 
+
             <h3>
+
                 From local warning
                 to remote notification.
+
             </h3>
 
+
             <p>
+
                 The GSM module adds another layer of safety by
                 allowing the system to communicate beyond the
                 immediate area of the device.
+
             </p>
 
+
             <div class="communication-note">
-                <span>i</span>
+
+                <span>
+                    i
+                </span>
+
 
                 <p>
+
                     SMS/call functionality depends on the SIM900A,
                     SIM/network availability, power supply, and
                     correct configuration.
+
                 </p>
+
             </div>
 
         </div>
@@ -1464,7 +2195,6 @@
     </div>
 
 
-    <!-- Cancel -->
 
     <div class="cancel-panel">
 
@@ -1472,20 +2202,27 @@
             <span></span>
         </div>
 
+
         <div>
 
             <span class="section-label">
                 MANUAL OVERRIDE
             </span>
 
+
             <h3>
+
                 False alarm?
                 <span>Cancel it.</span>
+
             </h3>
 
+
             <p>
+
                 The push button allows the user to cancel or
                 reset the alarm after an alert.
+
             </p>
 
         </div>
@@ -1494,11 +2231,17 @@
 
 </section>
 
-<!-- =========================================
-     TESTING & APPLICATIONS
-========================================= -->
 
-<section id="testing" class="testing-section">
+
+<!-- =====================================================
+     TESTING
+===================================================== -->
+
+<section
+    id="testing"
+    class="testing-section"
+>
+
 
     <div class="testing-heading">
 
@@ -1506,27 +2249,35 @@
             07 / TESTING & APPLICATIONS
         </div>
 
+
         <h2>
+
             From prototype
-            to <span>real-world safety.</span>
+            to
+            <span>real-world safety.</span>
+
         </h2>
 
+
         <p>
+
             Testing helps us understand how the system responds
             to sudden movement and how the concept could be
             applied to safety-focused environments.
+
         </p>
 
     </div>
 
 
-    <!-- Testing Dashboard -->
 
     <div class="testing-dashboard">
+
 
         <div class="dashboard-header">
 
             <div>
+
                 <span class="dashboard-label">
                     PROTOTYPE TESTING
                 </span>
@@ -1534,7 +2285,9 @@
                 <h3>
                     Detection response
                 </h3>
+
             </div>
+
 
             <div class="dashboard-status">
                 ● TEST MODE
@@ -1543,15 +2296,16 @@
         </div>
 
 
-        <!-- Test Sequence -->
 
         <div class="test-sequence">
+
 
             <div class="test-item">
 
                 <div class="test-marker">
                     01
                 </div>
+
 
                 <div class="test-content">
 
@@ -1560,12 +2314,15 @@
                     </strong>
 
                     <p>
+
                         The system continues monitoring without
                         immediately treating ordinary movement
                         as an emergency.
+
                     </p>
 
                 </div>
+
 
                 <div class="test-result normal-result">
                     MONITOR
@@ -1574,11 +2331,13 @@
             </div>
 
 
+
             <div class="test-item">
 
                 <div class="test-marker">
                     02
                 </div>
+
 
                 <div class="test-content">
 
@@ -1587,11 +2346,14 @@
                     </strong>
 
                     <p>
+
                         A significant sudden change in acceleration
                         is detected by the MPU6050.
+
                     </p>
 
                 </div>
+
 
                 <div class="test-result impact-result">
                     DETECTED
@@ -1600,11 +2362,13 @@
             </div>
 
 
+
             <div class="test-item">
 
                 <div class="test-marker">
                     03
                 </div>
+
 
                 <div class="test-content">
 
@@ -1613,11 +2377,14 @@
                     </strong>
 
                     <p>
+
                         The system checks movement and stability
                         after the detected impact.
+
                     </p>
 
                 </div>
+
 
                 <div class="test-result checking-result">
                     CHECKING
@@ -1626,11 +2393,13 @@
             </div>
 
 
+
             <div class="test-item">
 
                 <div class="test-marker">
                     04
                 </div>
+
 
                 <div class="test-content">
 
@@ -1639,11 +2408,14 @@
                     </strong>
 
                     <p>
+
                         If the required conditions are satisfied,
                         the alert sequence can be activated.
+
                     </p>
 
                 </div>
+
 
                 <div class="test-result alert-result">
                     ALERT
@@ -1656,7 +2428,6 @@
     </div>
 
 
-    <!-- Applications -->
 
     <div class="applications-heading">
 
@@ -1664,17 +2435,20 @@
             POSSIBLE APPLICATIONS
         </div>
 
+
         <h3>
+
             Designed around a simple idea:
             <span>notice the problem sooner.</span>
+
         </h3>
 
     </div>
 
 
+
     <div class="applications-grid">
 
-        <!-- Bathroom -->
 
         <article class="application-card application-main">
 
@@ -1687,9 +2461,11 @@
                 </div>
 
                 <div class="bathroom-signal signal-one"></div>
+
                 <div class="bathroom-signal signal-two"></div>
 
             </div>
+
 
             <div class="application-content">
 
@@ -1702,10 +2478,12 @@
                 </h3>
 
                 <p>
+
                     Wet floors can create slip hazards. A safety
                     system that monitors sudden movement and can
                     raise an alert could provide an additional
                     layer of awareness.
+
                 </p>
 
             </div>
@@ -1713,7 +2491,6 @@
         </article>
 
 
-        <!-- Home -->
 
         <article class="application-card">
 
@@ -1730,14 +2507,15 @@
             </h3>
 
             <p>
+
                 The concept could be adapted for areas where
                 unexpected falls may require quick assistance.
+
             </p>
 
         </article>
 
 
-        <!-- Care -->
 
         <article class="application-card">
 
@@ -1754,15 +2532,16 @@
             </h3>
 
             <p>
+
                 With further development and testing, similar
                 monitoring concepts could support safety systems
                 in assisted-care environments.
+
             </p>
 
         </article>
 
 
-        <!-- Public -->
 
         <article class="application-card">
 
@@ -1779,9 +2558,11 @@
             </h3>
 
             <p>
+
                 The underlying idea could be explored in other
                 environments where sudden incidents need to be
                 detected and communicated.
+
             </p>
 
         </article>
@@ -1789,7 +2570,6 @@
     </div>
 
 
-    <!-- Prototype Note -->
 
     <div class="prototype-note">
 
@@ -1797,17 +2577,21 @@
             i
         </div>
 
+
         <div>
 
             <strong>
                 Prototype status
             </strong>
 
+
             <p>
+
                 This project is a school science-expo prototype.
                 Further calibration, testing, reliability studies,
                 and safety validation would be required before
                 real-world deployment.
+
             </p>
 
         </div>
@@ -1816,31 +2600,70 @@
 
 </section>
 
-<!-- =========================================
+
+
+<!-- =====================================================
      PROJECT VIDEO
-<!-- ===================================== -->
-<section id="video" class="video-section">
-    <h2>Project Video</h2>
+===================================================== -->
+
+<section
+    id="video"
+    class="video-section"
+>
+
+
+    <div class="video-heading">
+
+        <div class="section-label">
+            PROJECT DEMONSTRATION
+        </div>
+
+
+        <h2>
+
+            See the system
+            <span>in action.</span>
+
+        </h2>
+
+
+        <p>
+
+            Watch our Smart Slip Detection and Alert System
+            demonstration to see how the prototype works.
+
+        </p>
+
+    </div>
+
 
     <div class="project-video-container">
+
         <iframe
             width="100%"
             height="500"
             src="https://www.youtube.com/embed/mwzYGyg8v-c"
-            title="Project Video"
+            title="Smart Slip Detection System Project Video"
             frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen>
-         </iframe>
+        </iframe>
+
     </div>
-</section>
-<!-- ===================================== -->
 
 </section>
-<!-- =========================================
-     PROJECT & TEAM SECTION
-========================================= -->
 
-<section id="project" class="project-section">
+
+
+<!-- =====================================================
+     PROJECT & TEAM
+===================================================== -->
+
+<section
+    id="project"
+    class="project-section"
+>
+
 
     <div class="project-heading">
 
@@ -1848,24 +2671,30 @@
             08 / THE PROJECT
         </div>
 
+
         <h2>
+
             Built to turn
             <span>technology into safety.</span>
+
         </h2>
 
+
         <p>
+
             Smart Slip Detection and Alert System is a
             school science-expo prototype exploring how
             sensors, embedded systems, and wireless
             communication can work together for safety.
+
         </p>
 
     </div>
 
 
-    <!-- Project Summary -->
 
     <div class="project-summary">
+
 
         <div class="summary-main">
 
@@ -1873,71 +2702,95 @@
                 PROJECT OVERVIEW
             </div>
 
+
             <h3>
+
                 A layered approach
                 to incident detection.
+
             </h3>
 
+
             <p>
+
                 The system monitors movement using the MPU6050,
                 uses the PIR sensor as an additional presence
                 signal, and evaluates sudden impact and
                 subsequent movement before activating an alert.
+
             </p>
 
         </div>
 
 
+
         <div class="summary-stats">
+
 
             <div class="summary-stat">
 
-                <strong>01</strong>
+                <strong>
+                    01
+                </strong>
 
                 <span>
                     MICROCONTROLLER
                 </span>
 
-                <p>Arduino Uno</p>
+                <p>
+                    Arduino Uno
+                </p>
 
             </div>
 
 
             <div class="summary-stat">
 
-                <strong>02</strong>
+                <strong>
+                    02
+                </strong>
 
                 <span>
                     MOTION SENSOR
                 </span>
 
-                <p>MPU6050</p>
+                <p>
+                    MPU6050
+                </p>
 
             </div>
 
 
             <div class="summary-stat">
 
-                <strong>03</strong>
+                <strong>
+                    03
+                </strong>
 
                 <span>
                     LOCAL ALERTS
                 </span>
 
-                <p>2 Buzzers</p>
+                <p>
+                    2 Buzzers
+                </p>
 
             </div>
 
 
             <div class="summary-stat">
 
-                <strong>04</strong>
+                <strong>
+                    04
+                </strong>
 
                 <span>
                     COMMUNICATION
                 </span>
 
-                <p>SIM900A GSM</p>
+                <p>
+                    SIM900A GSM
+                </p>
 
             </div>
 
@@ -1946,13 +2799,13 @@
     </div>
 
 
-    <!-- Team -->
 
     <div class="team-heading">
 
         <div class="section-label">
             THE TEAM
         </div>
+
 
         <h3>
             The people behind the prototype.
@@ -1961,7 +2814,9 @@
     </div>
 
 
+
     <div class="team-grid">
+
 
         <div class="team-card">
 
@@ -1982,6 +2837,7 @@
             </h3>
 
         </div>
+
 
 
         <div class="team-card">
@@ -2005,6 +2861,7 @@
         </div>
 
 
+
         <div class="team-card">
 
             <span class="team-number">
@@ -2024,6 +2881,7 @@
             </h3>
 
         </div>
+
 
 
         <div class="team-card">
@@ -2049,11 +2907,12 @@
     </div>
 
 
-    <!-- Final Statement -->
 
     <div class="project-final">
 
+
         <div class="final-grid">
+
 
             <div>
 
@@ -2061,20 +2920,25 @@
                     OUR OBJECTIVE
                 </span>
 
+
                 <h3>
+
                     Detect.
                     <span>Confirm.</span>
                     Alert.
+
                 </h3>
 
             </div>
 
 
             <p>
+
                 The goal is simple: demonstrate how a
                 small embedded system can observe an event,
                 evaluate sensor data, and communicate a
                 possible emergency.
+
             </p>
 
         </div>
@@ -2099,64 +2963,319 @@
 
 </section>
 
-<!-- AI FLOATING BUTTON -->
-<button id="ai-open-btn" class="ai-floating-button" aria-label="Open SlipBot">
+
+
+</main>
+
+
+
+<!-- =====================================================
+     SLIPBOT FLOATING BUTTON
+===================================================== -->
+
+<button
+    id="ai-open-btn"
+    class="ai-floating-button"
+    aria-label="Open SlipBot"
+    title="Open SlipBot"
+>
+
     🤖
+
 </button>
 
-<!-- AI FULLSCREEN AREA -->
-<div id="ai-overlay" class="ai-overlay">
 
-    <div class="ai-header">
-        <div class="ai-title">
-            <span class="ai-logo">🤖</span>
-            <div>
-                <h2>SlipBot</h2>
-                <span>Smart Slip Detection Assistant</span>
+
+<!-- =====================================================
+     SLIPBOT AI OVERLAY
+===================================================== -->
+
+<div
+    id="ai-overlay"
+    class="ai-overlay"
+>
+
+
+    <div class="ai-window">
+
+
+        <!-- =================================================
+             AI HEADER
+        ================================================== -->
+
+        <div class="ai-header">
+
+
+            <div class="ai-avatar">
+                🤖
             </div>
-        </div>
 
-        <button id="ai-close-btn" class="ai-close-button">
-            ✕
-        </button>
-    </div>
 
-    <div class="ai-main">
+            <div class="ai-header-info">
 
-        <div class="ai-welcome">
-            <div class="big-ai-icon">🤖</div>
+                <h3>
+                    SlipBot
+                </h3>
 
-            <h1>How can I help?</h1>
 
-            <p>
-                Ask me about our Smart Slip Detection System,
-                sensors, technology, or anything else!
-            </p>
-        </div>
+                <div class="ai-status">
 
-        <div id="chat-messages" class="chat-messages"></div>
+                    <span class="ai-status-dot"></span>
 
-        <div class="ai-input-container">
-            <input
-                type="text"
-                id="ai-input"
-                placeholder="Ask SlipBot something..."
-                autocomplete="off"
+                    <span>
+                        SMART SLIP AI
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="ai-live-text">
+                ONLINE
+            </div>
+
+
+            <button
+                id="ai-close-btn"
+                class="ai-close-button"
+                aria-label="Close SlipBot"
             >
 
-            <button id="ai-send" class="ai-send-button">
-                ➤
+                ✕
+
             </button>
+
         </div>
+
+
+
+        <!-- =================================================
+             AI LIVE STATUS
+        ================================================== -->
+
+        <div class="ai-system-status">
+
+            <span class="ai-system-dot"></span>
+
+            <span id="ai-status-text">
+                SLIPBOT STANDBY
+            </span>
+
+            <span class="ai-status-bars">
+
+                <i></i>
+                <i></i>
+                <i></i>
+
+            </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CHAT
+        ================================================== -->
+
+        <div
+            id="chat-messages"
+            class="chat-messages"
+        >
+
+
+            <!-- Initial Bot Message -->
+
+            <div class="chat-message bot bot-message">
+
+
+                <div class="bot-message-header">
+
+                    <div class="mini-bot-icon">
+                        🤖
+                    </div>
+
+                    <span>
+                        SlipBot
+                    </span>
+
+                    <small>
+                        NOW
+                    </small>
+
+                </div>
+
+
+                <div class="bot-message-content">
+
+                    Hey! I'm SlipBot. 👋
+
+                    <br><br>
+
+                    I can explain the Smart Slip Detection
+                    System, its sensors, detection process,
+                    science, GSM alerts, or general questions.
+
+                    <br><br>
+
+                    What would you like to explore?
+
+                </div>
+
+
+                <!-- QUICK QUESTIONS -->
+
+                <div class="ai-suggestions">
+
+
+                    <button
+                        class="ai-suggestion"
+                        type="button"
+                        data-question="How does the system work?"
+                    >
+
+                        <span>
+                            ⚙
+                        </span>
+
+                        How does it work?
+
+                    </button>
+
+
+                    <button
+                        class="ai-suggestion"
+                        type="button"
+                        data-question="What is the MPU6050?"
+                    >
+
+                        <span>
+                            🧠
+                        </span>
+
+                        Explain MPU6050
+
+                    </button>
+
+
+                    <button
+                        class="ai-suggestion"
+                        type="button"
+                        data-question="How is a fall detected?"
+                    >
+
+                        <span>
+                            🚨
+                        </span>
+
+                        Fall detection
+
+                    </button>
+
+
+                    <button
+                        class="ai-suggestion"
+                        type="button"
+                        data-question="How does the GSM alert work?"
+                    >
+
+                        <span>
+                            📡
+                        </span>
+
+                        GSM alerts
+
+                    </button>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             INPUT
+        ================================================== -->
+
+        <div class="ai-input-area">
+
+
+            <div class="ai-input-glow"></div>
+
+
+            <div class="ai-input-wrapper">
+
+
+                <span class="input-ai-icon">
+                    ✦
+                </span>
+
+
+                <input
+                    type="text"
+                    id="ai-input"
+                    placeholder="Ask SlipBot something..."
+                    autocomplete="off"
+                    maxlength="1000"
+                >
+
+
+                <span
+                    id="ai-typing-indicator"
+                    class="ai-typing-indicator"
+                >
+                    ●
+                </span>
+
+
+            </div>
+
+
+            <button
+                id="ai-send"
+                class="ai-send-button"
+                aria-label="Send message"
+            >
+
+                ➤
+
+            </button>
+
+        </div>
+
+
+
+        <div class="ai-footer">
+
+            <span>
+                ✦ AI-POWERED
+            </span>
+
+            <span>
+                PROJECT KNOWLEDGE + GENERAL AI
+            </span>
+
+        </div>
+
 
     </div>
 
 </div>
 
-    </main>
 
 
-    <script src="script.js"></script>
+<!-- =====================================================
+     SCRIPTS
+===================================================== -->
+
+<script src="script.js"></script>
+
 
 </body>
+
 </html>
+```
