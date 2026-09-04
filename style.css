@@ -8333,3 +8333,26 @@ canvas {
 .ai-window {
     pointer-events: auto !important;
 }
+/* FIX: prevent background animation from blocking clicks */
+#neural-network-bg,
+canvas {
+    pointer-events: none !important;
+}
+
+/* Keep SlipBot clickable above all other elements */
+.ai-floating-button {
+    position: fixed !important;
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+.ai-overlay {
+    position: fixed !important;
+    z-index: 999998 !important;
+    pointer-events: auto !important;
+}
+
+.ai-window {
+    pointer-events: auto !important;
+}
