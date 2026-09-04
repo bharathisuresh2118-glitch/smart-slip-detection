@@ -470,7 +470,7 @@ from flask import Flask, request, jsonify, send_from_directory, Response, stream
 app = Flask(__name__)
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama-3.1-8b-instant"
+MODEL = "llama-3.3-70b-versatile"
 
 
 # =========================================================
@@ -670,32 +670,20 @@ def chat():
 
 
     except requests.exceptions.HTTPError as e:
-
-        print(
-            "AI HTTP error:",
-            str(e)
-        )
+        print("AI HTTP error:", str(e))
+        if 'ai_response' in locals():
+            print("Groq response:", ai_response.text)
 
         return jsonify({
-
-            "error":
-            "The AI service rejected the request."
-
+            "error": "The AI service rejected the request.",
+            "details": ai_response.text if 'ai_response' in locals() else str(e)
         }), 502
 
-
     except Exception as e:
-
-        print(
-            "ERROR:",
-            str(e)
-        )
+        print("ERROR:", str(e))
 
         return jsonify({
-
-            "error":
-            "An unexpected server error occurred."
-
+            "error": "An unexpected server error occurred."
         }), 500
 
 
