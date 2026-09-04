@@ -116,7 +116,7 @@ async function sendMessage() {
     try {
 
         const response =
-            fetch("https://smart-slip-detection.onrender.com/api/chat", {
+            await fetch("https://smart-slip-detection.onrender.com/api/chat", {
 
                 method: "POST",
 
