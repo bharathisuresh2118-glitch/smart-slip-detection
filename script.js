@@ -82,7 +82,7 @@ function createBotMessage() {
 
 
 /* =========================================
-   SEND MESSAGE WITH STREAMING
+   SEND MESSAGE
 ========================================= */
 
 async function sendMessage() {
@@ -104,7 +104,7 @@ async function sendMessage() {
     aiInput.disabled = true;
 
 
-    /* Create empty bot bubble */
+    /* Create bot bubble */
 
     const botMessage =
         createBotMessage();
@@ -116,19 +116,20 @@ async function sendMessage() {
     try {
 
         const response =
-            await fetch("https://smart-slip-detection.onrender.com/api/chat", {
+            await fetch(
+                "https://smart-slip-detection.onrender.com/api/chat",
+                {
+                    method: "POST",
 
-                method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    message: question
-                })
-
-            });
+                    body: JSON.stringify({
+                        message: question
+                    })
+                }
+            );
 
 
         /* =====================================
@@ -146,12 +147,16 @@ async function sendMessage() {
                     await response.json();
 
                 if (data.error) {
+
                     errorMessage =
                         "⚠️ " + data.error;
+
                 }
 
             } catch (error) {
+
                 console.error(error);
+
             }
 
             botMessage.textContent =
@@ -163,18 +168,8 @@ async function sendMessage() {
 
 
         /* =====================================
-           STREAM CHECK
+           READ RESPONSE
         ===================================== */
-
-        if (!response.body) {
-
-            botMessage.textContent =
-                "⚠️ Streaming is not supported by this browser.";
-
-            return;
-
-        }
-
 
         const reader =
             response.body.getReader();
@@ -189,7 +184,7 @@ async function sendMessage() {
 
 
         /* =====================================
-           READ STREAM
+           READ RESPONSE STREAM
         ===================================== */
 
         while (true) {
@@ -214,8 +209,6 @@ async function sendMessage() {
                 );
 
 
-            /* Remove thinking message */
-
             if (firstChunk) {
 
                 botMessage.textContent = "";
@@ -231,15 +224,15 @@ async function sendMessage() {
                 fullReply;
 
 
-            /* Auto-scroll */
-
             chatMessages.scrollTop =
                 chatMessages.scrollHeight;
 
         }
 
 
-        /* Finish decoder */
+        /* =====================================
+           FINISH UTF-8 DECODER
+        ===================================== */
 
         const finalChunk =
             decoder.decode();
@@ -262,7 +255,7 @@ async function sendMessage() {
         );
 
         botMessage.textContent =
-            "⚠️ I couldn't reach the SlipBot server. Make sure server.py is running.";
+            "⚠️ I couldn't reach the SlipBot server. Make sure the SlipBot server is available.";
 
     }
 
@@ -299,6 +292,440 @@ aiInput.addEventListener(
             event.preventDefault();
 
             sendMessage();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SCROLL REVEAL SYSTEM
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+
+        /* =====================================
+           HERO LOAD ANIMATION
+        ===================================== */
+
+        const hero =
+            document.querySelector(".hero");
+
+        if (hero) {
+
+            const heroElements = [
+
+                ".status-badge",
+                ".hero h1",
+                ".hero-description",
+                ".hero-buttons",
+                ".hero-stats",
+                ".system-visual"
+
+            ];
+
+            heroElements.forEach(
+                selector => {
+
+                    const element =
+                        document.querySelector(selector);
+
+                    if (element) {
+
+                        element.classList.add(
+                            "hero-reveal"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /* Small delay makes the entrance feel intentional */
+
+            requestAnimationFrame(() => {
+
+                setTimeout(() => {
+
+                    hero.classList.add(
+                        "hero-loaded"
+                    );
+
+                }, 100);
+
+            });
+
+        }
+
+
+        /* =====================================
+           MAJOR SECTION REVEALS
+        ===================================== */
+
+        const sections = [
+
+            ".problem-section",
+            ".solution-section",
+            ".how-section",
+            ".hardware-section",
+            ".science-section",
+            ".emergency-section",
+            ".testing-section",
+            ".video-section",
+            ".project-section"
+
+        ];
+
+
+        sections.forEach(
+            (selector, index) => {
+
+                const section =
+                    document.querySelector(selector);
+
+                if (!section) return;
+
+
+                /*
+                 * Find the main heading inside
+                 * the section.
+                 */
+
+                const heading =
+                    section.querySelector(
+                        ":scope > .section-heading, " +
+                        ":scope > .how-heading, " +
+                        ":scope > .hardware-heading, " +
+                        ":scope > .science-heading, " +
+                        ":scope > .emergency-heading, " +
+                        ":scope > .testing-heading, " +
+                        ":scope > .project-heading, " +
+                        ":scope > .video-heading"
+                    );
+
+
+                if (heading) {
+
+                    heading.classList.add(
+                        "scroll-heading"
+                    );
+
+                }
+
+
+                /*
+                 * Reveal the major content
+                 * without touching elements
+                 * that already have their own
+                 * transform animations.
+                 */
+
+                const contentSelectors = {
+
+                    ".problem-section": [
+                        ".problem-grid"
+                    ],
+
+                    ".solution-section": [
+                        ".solution-content",
+                        ".solution-visual"
+                    ],
+
+                    ".how-section": [
+                        ".detection-pipeline",
+                        ".detection-principle"
+                    ],
+
+                    ".hardware-section": [
+                        ".hardware-grid",
+                        ".hardware-core"
+                    ],
+
+                    ".science-section": [
+                        ".science-grid",
+                        ".science-principle"
+                    ],
+
+                    ".emergency-section": [
+                        ".alert-status",
+                        ".emergency-flow",
+                        ".communication-panel",
+                        ".cancel-panel"
+                    ],
+
+                    ".testing-section": [
+                        ".testing-dashboard",
+                        ".applications-heading",
+                        ".applications-grid",
+                        ".prototype-note"
+                    ],
+
+                    ".video-section": [
+                        ".project-video-container"
+                    ],
+
+                    ".project-section": [
+                        ".project-summary",
+                        ".team-heading",
+                        ".team-grid",
+                        ".project-final"
+                    ]
+
+                };
+
+
+                const targets =
+                    contentSelectors[selector] || [];
+
+
+                targets.forEach(
+                    targetSelector => {
+
+                        const elements =
+                            section.querySelectorAll(
+                                targetSelector
+                            );
+
+                        elements.forEach(
+                            element => {
+
+                                element.classList.add(
+                                    "scroll-reveal"
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =====================================
+           STAGGER CARD GROUPS
+        ===================================== */
+
+        const staggerGroups = [
+
+            ".problem-grid",
+            ".detection-pipeline",
+            ".hardware-grid",
+            ".science-grid",
+            ".emergency-flow",
+            ".applications-grid",
+            ".team-grid",
+            ".summary-stats",
+            ".test-sequence"
+
+        ];
+
+
+        staggerGroups.forEach(
+            selector => {
+
+                const group =
+                    document.querySelector(selector);
+
+                if (!group) return;
+
+                group.classList.add(
+                    "scroll-stagger"
+                );
+
+            }
+        );
+
+
+        /* =====================================
+           SPECIAL LEFT / RIGHT REVEALS
+        ===================================== */
+
+        const leftElements = [
+
+            ".solution-content",
+            ".communication-info",
+            ".summary-main"
+
+        ];
+
+
+        leftElements.forEach(
+            selector => {
+
+                const element =
+                    document.querySelector(selector);
+
+                if (!element) return;
+
+                element.classList.remove(
+                    "scroll-reveal"
+                );
+
+                element.classList.add(
+                    "scroll-reveal-left"
+                );
+
+            }
+        );
+
+
+        const rightElements = [
+
+            ".solution-visual",
+            ".communication-screen"
+
+        ];
+
+
+        rightElements.forEach(
+            selector => {
+
+                const element =
+                    document.querySelector(selector);
+
+                if (!element) return;
+
+                element.classList.remove(
+                    "scroll-reveal"
+                );
+
+                element.classList.add(
+                    "scroll-reveal-right"
+                );
+
+            }
+        );
+
+
+        /* =====================================
+           SCALE-IN ELEMENTS
+        ===================================== */
+
+        const scaleElements = [
+
+            ".testing-dashboard",
+            ".project-final",
+            ".hardware-core",
+            ".project-video-container"
+
+        ];
+
+
+        scaleElements.forEach(
+            selector => {
+
+                const element =
+                    document.querySelector(selector);
+
+                if (!element) return;
+
+                element.classList.remove(
+                    "scroll-reveal"
+                );
+
+                element.classList.add(
+                    "scroll-reveal-scale"
+                );
+
+            }
+        );
+
+
+        /* =====================================
+           INTERSECTION OBSERVER
+        ===================================== */
+
+        const revealElements =
+            document.querySelectorAll(
+                ".scroll-reveal, " +
+                ".scroll-reveal-left, " +
+                ".scroll-reveal-right, " +
+                ".scroll-reveal-scale, " +
+                ".scroll-stagger, " +
+                ".scroll-heading"
+            );
+
+
+        if (
+            "IntersectionObserver"
+            in window
+        ) {
+
+            const observer =
+                new IntersectionObserver(
+                    (entries) => {
+
+                        entries.forEach(
+                            entry => {
+
+                                if (
+                                    entry.isIntersecting
+                                ) {
+
+                                    entry.target.classList.add(
+                                        "revealed"
+                                    );
+
+
+                                    /*
+                                     * Once the animation has
+                                     * played, stop watching it.
+                                     * This prevents the animation
+                                     * from replaying every time
+                                     * the user scrolls.
+                                     */
+
+                                    observer.unobserve(
+                                        entry.target
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    },
+                    {
+                        threshold: 0.12,
+
+                        rootMargin:
+                            "0px 0px -60px 0px"
+                    }
+                );
+
+
+            revealElements.forEach(
+                element => {
+
+                    observer.observe(
+                        element
+                    );
+
+                }
+            );
+
+        } else {
+
+            /*
+             * Fallback for very old browsers.
+             */
+
+            revealElements.forEach(
+                element => {
+
+                    element.classList.add(
+                        "revealed"
+                    );
+
+                }
+            );
 
         }
 
