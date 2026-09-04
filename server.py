@@ -1,7 +1,14 @@
-import requests
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, Response, stream_with_context
+from flask_cors import CORS
 
 app = Flask(__name__)
+app = Flask(__name__)
+
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "https://bharathisuresh2118-glitch.github.io"
+    }
+})
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
 MODEL = "gemma3:4b"
