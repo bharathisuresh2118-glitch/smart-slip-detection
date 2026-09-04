@@ -7207,3 +7207,322 @@ body {
     }
 
 }
+/* =========================================================
+   DETAILED TECH BACKGROUND
+========================================================= */
+
+html,
+body {
+    background: #030711;
+}
+
+
+/* ---------------------------------------------------------
+   MAIN BACKGROUND
+--------------------------------------------------------- */
+
+body {
+    position: relative;
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(0, 229, 255, 0.10) 0%,
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 85% 30%,
+            rgba(0, 170, 255, 0.08) 0%,
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 50% 85%,
+            rgba(0, 255, 200, 0.06) 0%,
+            transparent 32%
+        ),
+        linear-gradient(
+            135deg,
+            #02050c 0%,
+            #050914 45%,
+            #020711 100%
+        );
+
+    overflow-x: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   TECH GRID
+--------------------------------------------------------- */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 229, 255, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0, 229, 255, 0.035) 1px,
+            transparent 1px
+        );
+
+    background-size: 55px 55px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black 0%,
+            rgba(0, 0, 0, 0.8) 55%,
+            transparent 100%
+        );
+
+    z-index: -5;
+}
+
+
+/* ---------------------------------------------------------
+   SECONDARY FINE GRID
+--------------------------------------------------------- */
+
+body::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.012) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.012) 1px,
+            transparent 1px
+        );
+
+    background-size: 11px 11px;
+
+    opacity: 0.45;
+
+    z-index: -4;
+}
+
+
+/* =========================================================
+   SECTION DEPTH
+========================================================= */
+
+.problem-section,
+.solution-section,
+.how-section,
+.hardware-section,
+.science-section,
+.emergency-section,
+.testing-section,
+.video-section,
+.project-section {
+    position: relative;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(0, 229, 255, 0.025),
+            transparent 45%
+        );
+}
+
+
+/* ---------------------------------------------------------
+   ALTERNATING SECTION GLOW
+--------------------------------------------------------- */
+
+.problem-section::after,
+.hardware-section::after,
+.emergency-section::after,
+.project-section::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0, 229, 255, 0.055),
+            transparent 70%
+        );
+
+    top: 20%;
+    left: -250px;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+
+.solution-section::after,
+.science-section::after,
+.testing-section::after,
+.video-section::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 450px;
+    height: 450px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0, 150, 255, 0.045),
+            transparent 70%
+        );
+
+    top: 30%;
+    right: -225px;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   FLOATING TECH PARTICLES
+========================================================= */
+
+.hero,
+.problem-section,
+.solution-section,
+.how-section,
+.hardware-section,
+.science-section,
+.emergency-section,
+.testing-section,
+.video-section,
+.project-section {
+    isolation: isolate;
+}
+
+
+/* tiny background dots */
+
+.hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(0, 229, 255, 0.35) 1px,
+            transparent 1px
+        );
+
+    background-size: 90px 90px;
+
+    opacity: 0.13;
+
+    mask-image:
+        radial-gradient(
+            ellipse at center,
+            black 0%,
+            transparent 75%
+        );
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   TECH CORNER MARKERS
+========================================================= */
+
+.problem-section::before,
+.solution-section::before,
+.how-section::before,
+.hardware-section::before,
+.science-section::before,
+.emergency-section::before,
+.testing-section::before,
+.video-section::before,
+.project-section::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(0, 229, 255, 0.22),
+            transparent
+        ) !important;
+}
+
+
+/* =========================================================
+   SUBTLE HORIZONTAL SCANLINE
+========================================================= */
+
+body {
+    background-attachment: fixed;
+}
+
+.hero {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 229, 255, 0.018),
+            transparent 35%
+        );
+}
+
+
+/* =========================================================
+   MOBILE PERFORMANCE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    body::before {
+        background-size: 45px 45px;
+        opacity: 0.7;
+    }
+
+    body::after {
+        opacity: 0.25;
+    }
+
+    .problem-section::after,
+    .solution-section::after,
+    .hardware-section::after,
+    .science-section::after,
+    .emergency-section::after,
+    .testing-section::after,
+    .project-section::after {
+
+        opacity: 0.5;
+    }
+
+}
