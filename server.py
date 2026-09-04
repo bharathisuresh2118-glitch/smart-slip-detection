@@ -1,3 +1,4 @@
+
 import os
 import json
 import requests
@@ -74,7 +75,7 @@ through GSM communication.
 
 Core concept:
 
-Detect → Confirm/Monitor → Alert → Notify → Acknowledge → Reset
+Detect -> Confirm/Monitor -> Alert -> Notify -> Acknowledge -> Reset
 
 
 ==================================================
@@ -142,11 +143,11 @@ The MPU6050 provides acceleration on X, Y, and Z axes and gyroscope measurements
 
 Acceleration magnitude can be calculated conceptually as:
 
-A = sqrt(Ax² + Ay² + Az²)
+A = sqrt(Ax^2 + Ay^2 + Az^2)
 
-Earth's gravitational acceleration is approximately 9.81 m/s².
+Earth's gravitational acceleration is approximately 9.81 m/s^2.
 
-The system should NOT assume that every acceleration greater than 9.81 m/s²
+The system should NOT assume that every acceleration greater than 9.81 m/s^2
 automatically means a fall.
 
 The CURRENT prototype primarily uses acceleration-based detection.
@@ -154,10 +155,10 @@ The CURRENT prototype primarily uses acceleration-based detection.
 A more advanced version may use:
 
 Normal movement
-→ possible free-fall/reduction
-→ impact
-→ orientation
-→ confirmation
+-> possible free-fall/reduction
+-> impact
+-> orientation
+-> confirmation
 
 Do NOT claim that the advanced free-fall/orientation algorithm is already
 fully implemented unless the user explicitly says it has been implemented.
@@ -201,15 +202,15 @@ The push button is configured using INPUT_PULLUP.
 
 Therefore:
 
-Button released → HIGH
-Button pressed → LOW
+Button released -> HIGH
+Button pressed -> LOW
 
 When the button is pressed during an active alert:
 
-Both buzzers → OFF
-Alert → Cleared
-System → Reset
-Monitoring → Resumes
+Both buzzers -> OFF
+Alert -> Cleared
+System -> Reset
+Monitoring -> Resumes
 
 
 ==================================================
@@ -243,13 +244,13 @@ I2C
 
 Arduino UNO I2C pins:
 
-A4 → SDA
-A5 → SCL
+A4 -> SDA
+A5 -> SCL
 
 Current known I2C addresses:
 
-LCD → 0x27
-MPU6050 → 0x68
+LCD -> 0x27
+MPU6050 -> 0x68
 
 The LCD and MPU6050 can share SDA and SCL because I2C allows multiple devices
 with different addresses on the same bus.
@@ -261,18 +262,18 @@ KNOWN PIN CONFIGURATION
 
 Current/known project wiring includes:
 
-PIR OUT → D2
-Push Button → D7
-Main Buzzer → D8
-Micro Buzzer → D9
-SIM900A TX → D10
-SIM900A RX → D11
+PIR OUT -> D2
+Push Button -> D7
+Main Buzzer -> D8
+Micro Buzzer -> D9
+SIM900A TX -> D10
+SIM900A RX -> D11
 
-LCD SDA → A4
-MPU6050 SDA → A4
+LCD SDA -> A4
+MPU6050 SDA -> A4
 
-LCD SCL → A5
-MPU6050 SCL → A5
+LCD SCL -> A5
+MPU6050 SCL -> A5
 
 All relevant devices should use appropriate common ground.
 
@@ -281,7 +282,7 @@ The ultrasonic sensor pin assignment has been discussed as a proposed configurat
 Do not present D4/D5 as definitely final unless the user confirms it.
 
 Earlier project versions also used other ultrasonic pin assignments, so treat the
-ultrasonic pins as requiring confirmation if asked. 
+ultrasonic pins as requiring confirmation if asked.
 
 
 ==================================================
@@ -316,25 +317,35 @@ SYSTEM STATES
 The conceptual system flow is:
 
 SAFE
-↓
+|
+v
 Possible abnormal event
-↓
+|
+v
 FALL ALERT
-↓
+|
+v
 Buzzers ON
-↓
+|
+v
 LCD ALERT
-↓
+|
+v
 SMS
-↓
+|
+v
 WAIT FOR BUTTON
-↓
+|
+v
 Button pressed
-↓
+|
+v
 Buzzers OFF
-↓
+|
+v
 SYSTEM RESET
-↓
+|
+v
 SAFE
 
 
@@ -446,7 +457,7 @@ other provides a local warning.
 
 If asked "What happens after a fall?":
 Explain:
-Detection → immediate buzzers → LCD alert → GSM SMS → wait for button →
+Detection -> immediate buzzers -> LCD alert -> GSM SMS -> wait for button ->
 reset and resume monitoring.
 
 If asked "Can it detect every fall?":
@@ -501,10 +512,6 @@ def home():
 def files(path):
     return send_from_directory(".", path)
 
-
-# =========================================================
-# STREAMING AI
-# =========================================================
 
 # =========================================================
 # STREAMING AI
@@ -571,35 +578,26 @@ def chat():
             },
 
             json={
-
                 "model": MODEL,
 
                 "messages": [
-
                     {
                         "role": "system",
                         "content": PROJECT_KNOWLEDGE
                     },
-
                     {
                         "role": "user",
                         "content": user_message
                     }
-
                 ],
 
                 "stream": True,
-
                 "temperature": 0.3,
-
                 "max_tokens": 150
-
             },
 
             stream=True,
-
             timeout=120
-
         )
 
 
@@ -621,12 +619,15 @@ def chat():
 
             try:
 
+                got_content = False
+
                 for line in ai_response.iter_lines(
                     decode_unicode=True
                 ):
 
                     if not line:
                         continue
+
 
                     # Remove SSE prefix
                     if line.startswith("data: "):
@@ -656,18 +657,34 @@ def chat():
                             {}
                         )
 
+
+                        # Normal response content
                         content = delta.get(
                             "content",
                             ""
                         )
 
                         if content:
+
+                            got_content = True
+
                             yield content
 
 
                     except json.JSONDecodeError:
 
                         continue
+
+
+                if not got_content:
+
+                    print(
+                        "WARNING: Groq returned no content."
+                    )
+
+                    yield (
+                        "Sorry, SlipBot received an empty response from the AI."
+                    )
 
 
                 print()
@@ -682,7 +699,7 @@ def chat():
                 )
 
                 yield (
-                    "\n\n⚠️ SlipBot encountered an error."
+                    "\n\nSlipBot encountered a streaming error."
                 )
 
 
@@ -813,3 +830,4 @@ if __name__ == "__main__":
         threaded=True
 
     )
+
