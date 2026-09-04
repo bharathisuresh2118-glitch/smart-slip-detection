@@ -74,23 +74,33 @@ function initSlipBot() {
     ----------------------------------------------------- */
 
     if (!aiOpenBtn) {
-        console.error("SlipBot error: #ai-open-btn not found.");
+        console.error(
+            "SlipBot error: #ai-open-btn not found."
+        );
     }
 
     if (!aiCloseBtn) {
-        console.error("SlipBot error: #ai-close-btn not found.");
+        console.error(
+            "SlipBot error: #ai-close-btn not found."
+        );
     }
 
     if (!aiOverlay) {
-        console.error("SlipBot error: #ai-overlay not found.");
+        console.error(
+            "SlipBot error: #ai-overlay not found."
+        );
     }
 
     if (!aiInput) {
-        console.error("SlipBot error: #ai-input not found.");
+        console.error(
+            "SlipBot error: #ai-input not found."
+        );
     }
 
     if (!aiSend) {
-        console.error("SlipBot error: #ai-send not found.");
+        console.error(
+            "SlipBot error: #ai-send not found."
+        );
     }
 
     if (!chatMessages) {
@@ -117,7 +127,10 @@ function initSlipBot() {
             aiStatusText.textContent = status;
         }
 
-        console.log("SlipBot status:", status);
+        console.log(
+            "SlipBot status:",
+            status
+        );
 
     }
 
@@ -129,8 +142,10 @@ function initSlipBot() {
     function showTypingIndicator() {
 
         if (aiTypingIndicator) {
+
             aiTypingIndicator.style.display =
                 "inline-block";
+
         }
 
     }
@@ -139,55 +154,110 @@ function initSlipBot() {
     function hideTypingIndicator() {
 
         if (aiTypingIndicator) {
+
             aiTypingIndicator.style.display =
                 "none";
+
         }
 
     }
 
 
     /* =====================================================
-       OPEN
+       OPEN SLIPBOT
     ===================================================== */
 
     if (aiOpenBtn && aiOverlay) {
 
-        aiOpenBtn.addEventListener("click", () => {
+        aiOpenBtn.addEventListener(
+            "click",
+            (event) => {
 
-            aiOverlay.style.display = "flex";
+                event.preventDefault();
+                event.stopPropagation();
 
-            document.body.style.overflow = "hidden";
+                aiOverlay.classList.add("active");
 
-            setAIStatus("SLIPBOT READY");
+                document.body.style.overflow =
+                    "hidden";
 
-            setTimeout(() => {
+                setAIStatus(
+                    "SLIPBOT READY"
+                );
 
-                if (aiInput) {
-                    aiInput.focus();
-                }
+                setTimeout(() => {
 
-            }, 150);
+                    if (aiInput) {
+                        aiInput.focus();
+                    }
 
-        });
+                }, 300);
+
+            }
+        );
 
     }
 
 
     /* =====================================================
-       CLOSE
+       CLOSE SLIPBOT
     ===================================================== */
 
     if (aiCloseBtn && aiOverlay) {
 
-        aiCloseBtn.addEventListener("click", () => {
+        aiCloseBtn.addEventListener(
+            "click",
+            (event) => {
 
-            aiOverlay.style.display = "none";
+                event.preventDefault();
+                event.stopPropagation();
 
-            document.body.style.overflow = "";
+                aiOverlay.classList.remove(
+                    "active"
+                );
 
-            setAIStatus("SLIPBOT STANDBY");
+                document.body.style.overflow =
+                    "";
 
-        });
+                setAIStatus(
+                    "SLIPBOT STANDBY"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       CLOSE WHEN CLICKING OUTSIDE WINDOW
+    ===================================================== */
+
+    if (aiOverlay) {
+
+        aiOverlay.addEventListener(
+            "click",
+            (event) => {
+
+                if (
+                    event.target === aiOverlay
+                ) {
+
+                    aiOverlay.classList.remove(
+                        "active"
+                    );
+
+                    document.body.style.overflow =
+                        "";
+
+                    setAIStatus(
+                        "SLIPBOT STANDBY"
+                    );
+
+                }
+
+            }
+        );
 
     }
 
@@ -196,23 +266,33 @@ function initSlipBot() {
        ESCAPE KEY
     ===================================================== */
 
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener(
+        "keydown",
+        (event) => {
 
-        if (
-            event.key === "Escape" &&
-            aiOverlay &&
-            aiOverlay.style.display === "flex"
-        ) {
+            if (
+                event.key === "Escape" &&
+                aiOverlay &&
+                aiOverlay.classList.contains(
+                    "active"
+                )
+            ) {
 
-            aiOverlay.style.display = "none";
+                aiOverlay.classList.remove(
+                    "active"
+                );
 
-            document.body.style.overflow = "";
+                document.body.style.overflow =
+                    "";
 
-            setAIStatus("SLIPBOT STANDBY");
+                setAIStatus(
+                    "SLIPBOT STANDBY"
+                );
+
+            }
 
         }
-
-    });
+    );
 
 
     /* =====================================================
@@ -221,7 +301,9 @@ function initSlipBot() {
 
     function addUserMessage(text) {
 
-        if (!chatMessages) return;
+        if (!chatMessages) {
+            return;
+        }
 
         const message =
             document.createElement("div");
@@ -229,9 +311,12 @@ function initSlipBot() {
         message.className =
             "chat-message user user-message";
 
-        message.textContent = text;
+        message.textContent =
+            text;
 
-        chatMessages.appendChild(message);
+        chatMessages.appendChild(
+            message
+        );
 
         scrollChatToBottom();
 
@@ -244,7 +329,9 @@ function initSlipBot() {
 
     function createBotMessage() {
 
-        if (!chatMessages) return null;
+        if (!chatMessages) {
+            return null;
+        }
 
         const message =
             document.createElement("div");
@@ -272,7 +359,9 @@ function initSlipBot() {
             <div class="bot-message-content"></div>
         `;
 
-        chatMessages.appendChild(message);
+        chatMessages.appendChild(
+            message
+        );
 
         scrollChatToBottom();
 
@@ -289,13 +378,17 @@ function initSlipBot() {
 
     function scrollChatToBottom() {
 
-        if (!chatMessages) return;
+        if (!chatMessages) {
+            return;
+        }
 
         chatMessages.scrollTo({
 
-            top: chatMessages.scrollHeight,
+            top:
+                chatMessages.scrollHeight,
 
-            behavior: "smooth"
+            behavior:
+                "smooth"
 
         });
 
@@ -311,30 +404,42 @@ function initSlipBot() {
         text
     ) {
 
-        if (!element) return;
+        if (!element) {
+            return;
+        }
 
-        element.textContent = "";
+        element.textContent =
+            "";
 
         const characters =
             [...String(text)];
 
+        let speed =
+            12;
 
-        let speed = 12;
 
+        if (
+            characters.length > 900
+        ) {
 
-        if (characters.length > 900) {
-
-            speed = 5;
-
-        }
-        else if (characters.length > 600) {
-
-            speed = 7;
+            speed =
+                5;
 
         }
-        else if (characters.length > 300) {
+        else if (
+            characters.length > 600
+        ) {
 
-            speed = 9;
+            speed =
+                7;
+
+        }
+        else if (
+            characters.length > 300
+        ) {
+
+            speed =
+                9;
 
         }
 
@@ -349,19 +454,25 @@ function initSlipBot() {
                 characters[i];
 
 
-            if (i % 3 === 0) {
+            if (
+                i % 3 === 0
+            ) {
+
                 scrollChatToBottom();
+
             }
 
 
-            await new Promise(resolve => {
+            await new Promise(
+                resolve => {
 
-                setTimeout(
-                    resolve,
-                    speed
-                );
+                    setTimeout(
+                        resolve,
+                        speed
+                    );
 
-            });
+                }
+            );
 
         }
 
@@ -384,13 +495,15 @@ function initSlipBot() {
         const controller =
             new AbortController();
 
-
         const timeoutId =
-            setTimeout(() => {
+            setTimeout(
+                () => {
 
-                controller.abort();
+                    controller.abort();
 
-            }, timeout);
+                },
+                timeout
+            );
 
 
         try {
@@ -407,7 +520,9 @@ function initSlipBot() {
         }
         finally {
 
-            clearTimeout(timeoutId);
+            clearTimeout(
+                timeoutId
+            );
 
         }
 
@@ -428,14 +543,16 @@ function initSlipBot() {
             ) || "";
 
 
-        /* -----------------------------------------------
+        /* -------------------------------------------------
            JSON RESPONSE
-        ----------------------------------------------- */
+        ------------------------------------------------- */
 
         if (
             contentType
                 .toLowerCase()
-                .includes("application/json")
+                .includes(
+                    "application/json"
+                )
         ) {
 
             const data =
@@ -444,7 +561,8 @@ function initSlipBot() {
 
             if (
                 data &&
-                typeof data.answer === "string"
+                typeof data.answer ===
+                    "string"
             ) {
 
                 return data.answer;
@@ -454,7 +572,8 @@ function initSlipBot() {
 
             if (
                 data &&
-                typeof data.message === "string"
+                typeof data.message ===
+                    "string"
             ) {
 
                 return data.message;
@@ -464,7 +583,8 @@ function initSlipBot() {
 
             if (
                 data &&
-                typeof data.response === "string"
+                typeof data.response ===
+                    "string"
             ) {
 
                 return data.response;
@@ -474,22 +594,28 @@ function initSlipBot() {
 
             if (
                 data &&
-                typeof data.error === "string"
+                typeof data.error ===
+                    "string"
             ) {
 
-                return "⚠️ " + data.error;
+                return (
+                    "⚠️ " +
+                    data.error
+                );
 
             }
 
 
-            return JSON.stringify(data);
+            return JSON.stringify(
+                data
+            );
 
         }
 
 
-        /* -----------------------------------------------
+        /* -------------------------------------------------
            TEXT RESPONSE
-        ----------------------------------------------- */
+        ------------------------------------------------- */
 
         return await response.text();
 
@@ -538,29 +664,35 @@ function initSlipBot() {
         }
 
 
-        /* -----------------------------------------------
+        /* -------------------------------------------------
            USER MESSAGE
-        ----------------------------------------------- */
+        ------------------------------------------------- */
 
-        addUserMessage(question);
+        addUserMessage(
+            question
+        );
 
-        aiInput.value = "";
+        aiInput.value =
+            "";
 
 
-        /* -----------------------------------------------
+        /* -------------------------------------------------
            LOCK UI
-        ----------------------------------------------- */
+        ------------------------------------------------- */
 
-        slipBotBusy = true;
+        slipBotBusy =
+            true;
 
-        aiSend.disabled = true;
+        aiSend.disabled =
+            true;
 
-        aiInput.disabled = true;
+        aiInput.disabled =
+            true;
 
 
-        /* -----------------------------------------------
+        /* -------------------------------------------------
            STATUS
-        ----------------------------------------------- */
+        ------------------------------------------------- */
 
         setAIStatus(
             "CONNECTING TO SLIPBOT..."
@@ -569,9 +701,9 @@ function initSlipBot() {
         showTypingIndicator();
 
 
-        /* -----------------------------------------------
+        /* -------------------------------------------------
            BOT MESSAGE
-        ----------------------------------------------- */
+        ------------------------------------------------- */
 
         const botMessage =
             createBotMessage();
@@ -583,11 +715,14 @@ function initSlipBot() {
                 "SlipBot error: could not create bot message."
             );
 
-            slipBotBusy = false;
+            slipBotBusy =
+                false;
 
-            aiSend.disabled = false;
+            aiSend.disabled =
+                false;
 
-            aiInput.disabled = false;
+            aiInput.disabled =
+                false;
 
             hideTypingIndicator();
 
@@ -596,9 +731,9 @@ function initSlipBot() {
         }
 
 
-        /* -----------------------------------------------
+        /* -------------------------------------------------
            THINKING UI
-        ----------------------------------------------- */
+        ------------------------------------------------- */
 
         botMessage.innerHTML = `
             <div class="thinking-bubble">
@@ -622,6 +757,10 @@ function initSlipBot() {
         scrollChatToBottom();
 
 
+        /* =================================================
+           API REQUEST
+        ================================================= */
+
         try {
 
             console.log(
@@ -630,29 +769,31 @@ function initSlipBot() {
             );
 
 
-            /* -------------------------------------------
-               API REQUEST
-            ------------------------------------------- */
-
             const response =
                 await fetchWithTimeout(
 
                     SLIPBOT_API_URL,
 
                     {
-                        method: "POST",
+
+                        method:
+                            "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json",
 
                             "Accept":
                                 "text/plain, application/json"
+
                         },
 
-                        body: JSON.stringify({
-                            message: question
-                        })
+                        body:
+                            JSON.stringify({
+                                message:
+                                    question
+                            })
 
                     },
 
@@ -667,9 +808,9 @@ function initSlipBot() {
             );
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                HTTP ERROR
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             if (!response.ok) {
 
@@ -695,7 +836,8 @@ function initSlipBot() {
                 }
 
 
-                botMessage.innerHTML = "";
+                botMessage.innerHTML =
+                    "";
 
 
                 let displayError =
@@ -717,8 +859,12 @@ function initSlipBot() {
 
 
                 await typeBotMessage(
+
                     botMessage,
-                    "⚠️ " + displayError
+
+                    "⚠️ " +
+                    displayError
+
                 );
 
 
@@ -739,9 +885,9 @@ function initSlipBot() {
             }
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                READ RESPONSE
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             const reply =
                 await readBackendResponse(
@@ -755,21 +901,25 @@ function initSlipBot() {
             );
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                EMPTY RESPONSE
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             if (
                 !reply ||
                 !reply.trim()
             ) {
 
-                botMessage.innerHTML = "";
+                botMessage.innerHTML =
+                    "";
 
 
                 await typeBotMessage(
+
                     botMessage,
+
                     "⚠️ SlipBot connected, but the server returned an empty response."
+
                 );
 
 
@@ -783,9 +933,9 @@ function initSlipBot() {
             }
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                RESPONSE READY
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             hideTypingIndicator();
 
@@ -794,26 +944,30 @@ function initSlipBot() {
             );
 
 
-            /* -------------------------------------------
-               CLEAR THINKING
-            ------------------------------------------- */
+            /* -------------------------------------------------
+               CLEAR THINKING UI
+            ------------------------------------------------- */
 
-            botMessage.innerHTML = "";
+            botMessage.innerHTML =
+                "";
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                TYPE RESPONSE
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             await typeBotMessage(
+
                 botMessage,
+
                 reply.trim()
+
             );
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                READY
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             setAIStatus(
                 "SLIPBOT READY"
@@ -821,6 +975,10 @@ function initSlipBot() {
 
         }
 
+
+        /* =================================================
+           ERROR HANDLING
+        ================================================= */
 
         catch (error) {
 
@@ -830,16 +988,18 @@ function initSlipBot() {
             );
 
 
-            botMessage.innerHTML = "";
+            botMessage.innerHTML =
+                "";
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                TIMEOUT
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             if (
                 error &&
-                error.name === "AbortError"
+                error.name ===
+                    "AbortError"
             ) {
 
                 await typeBotMessage(
@@ -858,9 +1018,9 @@ function initSlipBot() {
             }
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                NETWORK ERROR
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             else {
 
@@ -882,33 +1042,43 @@ function initSlipBot() {
         }
 
 
+        /* =================================================
+           UNLOCK UI
+        ================================================= */
+
         finally {
 
             hideTypingIndicator();
 
 
-            slipBotBusy = false;
+            slipBotBusy =
+                false;
 
 
-            aiSend.disabled = false;
+            aiSend.disabled =
+                false;
 
-            aiInput.disabled = false;
+            aiInput.disabled =
+                false;
 
 
             aiInput.focus();
 
 
-            setTimeout(() => {
+            setTimeout(
+                () => {
 
-                if (!slipBotBusy) {
+                    if (!slipBotBusy) {
 
-                    setAIStatus(
-                        "SLIPBOT READY"
-                    );
+                        setAIStatus(
+                            "SLIPBOT READY"
+                        );
 
-                }
+                    }
 
-            }, 1800);
+                },
+                1800
+            );
 
         }
 
@@ -946,7 +1116,8 @@ function initSlipBot() {
             (event) => {
 
                 if (
-                    event.key === "Enter" &&
+                    event.key ===
+                        "Enter" &&
                     !event.shiftKey
                 ) {
 
@@ -1003,6 +1174,27 @@ function initSlipBot() {
             }
 
 
+            /* -------------------------------------------------
+               OPEN SLIPBOT IF NECESSARY
+            ------------------------------------------------- */
+
+            if (
+                aiOverlay &&
+                !aiOverlay.classList.contains(
+                    "active"
+                )
+            ) {
+
+                aiOverlay.classList.add(
+                    "active"
+                );
+
+                document.body.style.overflow =
+                    "hidden";
+
+            }
+
+
             aiInput.value =
                 question;
 
@@ -1047,7 +1239,9 @@ function initScrollReveal() {
     ===================================================== */
 
     const hero =
-        document.querySelector(".hero");
+        document.querySelector(
+            ".hero"
+        );
 
 
     if (hero) {
@@ -1090,17 +1284,22 @@ function initScrollReveal() {
         );
 
 
-        requestAnimationFrame(() => {
+        requestAnimationFrame(
+            () => {
 
-            setTimeout(() => {
+                setTimeout(
+                    () => {
 
-                hero.classList.add(
-                    "hero-loaded"
+                        hero.classList.add(
+                            "hero-loaded"
+                        );
+
+                    },
+                    100
                 );
 
-            }, 100);
-
-        });
+            }
+        );
 
     }
 
@@ -1498,7 +1697,8 @@ function initScrollReveal() {
 
                 {
 
-                    threshold: 0.12,
+                    threshold:
+                        0.12,
 
                     rootMargin:
                         "0px 0px -60px 0px"
@@ -1562,13 +1762,43 @@ function initNeuralNetwork() {
         "neural-network-bg";
 
 
+    /* -----------------------------------------------------
+       IMPORTANT:
+       The canvas must NEVER block clicks.
+    ----------------------------------------------------- */
+
+    canvas.style.pointerEvents =
+        "none";
+
+
+    canvas.style.position =
+        "fixed";
+
+    canvas.style.top =
+        "0";
+
+    canvas.style.left =
+        "0";
+
+    canvas.style.width =
+        "100%";
+
+    canvas.style.height =
+        "100%";
+
+    canvas.style.zIndex =
+        "-1";
+
+
     document.body.prepend(
         canvas
     );
 
 
     const ctx =
-        canvas.getContext("2d");
+        canvas.getContext(
+            "2d"
+        );
 
 
     if (!ctx) {
@@ -1610,11 +1840,14 @@ function initNeuralNetwork() {
     };
 
 
-    let width = 0;
+    let width =
+        0;
 
-    let height = 0;
+    let height =
+        0;
 
-    let dpr = 1;
+    let dpr =
+        1;
 
 
     /* =====================================================
@@ -1625,7 +1858,8 @@ function initNeuralNetwork() {
 
         dpr =
             Math.min(
-                window.devicePixelRatio || 1,
+                window.devicePixelRatio ||
+                    1,
                 2
             );
 
@@ -1684,9 +1918,11 @@ function initNeuralNetwork() {
 
     const mouse = {
 
-        x: null,
+        x:
+            null,
 
-        y: null
+        y:
+            null
 
     };
 
@@ -1713,12 +1949,15 @@ function initNeuralNetwork() {
         event => {
 
             if (
-                event.relatedTarget === null
+                event.relatedTarget ===
+                    null
             ) {
 
-                mouse.x = null;
+                mouse.x =
+                    null;
 
-                mouse.y = null;
+                mouse.y =
+                    null;
 
             }
 
@@ -1746,7 +1985,8 @@ function initNeuralNetwork() {
 
             this.vx =
                 (
-                    Math.random() - 0.5
+                    Math.random() -
+                    0.5
                 )
                 *
                 settings.nodeSpeed;
@@ -1754,21 +1994,22 @@ function initNeuralNetwork() {
 
             this.vy =
                 (
-                    Math.random() - 0.5
+                    Math.random() -
+                    0.5
                 )
                 *
                 settings.nodeSpeed;
 
 
             this.radius =
-                Math.random() * 1.7 + 1;
+                Math.random() *
+                1.7 +
+                1;
 
 
             this.phase =
-                Math.random()
-                *
-                Math.PI
-                *
+                Math.random() *
+                Math.PI *
                 2;
 
         }
@@ -1784,11 +2025,13 @@ function initNeuralNetwork() {
                 this.vy;
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                WRAP X
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
-            if (this.x < -20) {
+            if (
+                this.x < -20
+            ) {
 
                 this.x =
                     width + 20;
@@ -1796,7 +2039,10 @@ function initNeuralNetwork() {
             }
 
 
-            if (this.x > width + 20) {
+            if (
+                this.x >
+                width + 20
+            ) {
 
                 this.x =
                     -20;
@@ -1804,11 +2050,13 @@ function initNeuralNetwork() {
             }
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                WRAP Y
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
-            if (this.y < -20) {
+            if (
+                this.y < -20
+            ) {
 
                 this.y =
                     height + 20;
@@ -1816,7 +2064,10 @@ function initNeuralNetwork() {
             }
 
 
-            if (this.y > height + 20) {
+            if (
+                this.y >
+                height + 20
+            ) {
 
                 this.y =
                     -20;
@@ -1824,9 +2075,9 @@ function initNeuralNetwork() {
             }
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                MOUSE INFLUENCE
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             if (
                 mouse.x !== null &&
@@ -1853,7 +2104,7 @@ function initNeuralNetwork() {
                 if (
                     distance > 0 &&
                     distance <
-                    settings.mouseInfluence
+                        settings.mouseInfluence
                 ) {
 
                     const force =
@@ -1903,7 +2154,8 @@ function initNeuralNetwork() {
                 (
                     Math.sin(
                         this.phase
-                    ) + 1
+                    ) +
+                    1
                 )
                 /
                 2;
@@ -1911,12 +2163,13 @@ function initNeuralNetwork() {
 
             const alpha =
                 0.35 +
-                glow * 0.35;
+                glow *
+                0.35;
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                OUTER GLOW
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             ctx.beginPath();
 
@@ -1928,7 +2181,7 @@ function initNeuralNetwork() {
                 this.y,
 
                 this.radius +
-                glow * 3,
+                    glow * 3,
 
                 0,
 
@@ -1944,9 +2197,9 @@ function initNeuralNetwork() {
             ctx.fill();
 
 
-            /* -------------------------------------------
+            /* -------------------------------------------------
                NODE
-            ------------------------------------------- */
+            ------------------------------------------------- */
 
             ctx.beginPath();
 
@@ -1981,12 +2234,14 @@ function initNeuralNetwork() {
        CREATE NODES
     ===================================================== */
 
-    const nodes = [];
+    const nodes =
+        [];
 
 
     for (
         let i = 0;
-        i < settings.nodeCount;
+        i <
+            settings.nodeCount;
         i++
     ) {
 
@@ -2005,13 +2260,15 @@ function initNeuralNetwork() {
 
         for (
             let i = 0;
-            i < nodes.length;
+            i <
+                nodes.length;
             i++
         ) {
 
             for (
                 let j = i + 1;
-                j < nodes.length;
+                j <
+                    nodes.length;
                 j++
             ) {
 
@@ -2048,7 +2305,7 @@ function initNeuralNetwork() {
                     const strength =
                         1 -
                         distance /
-                        settings.connectionDistance;
+                            settings.connectionDistance;
 
 
                     ctx.beginPath();
@@ -2089,9 +2346,11 @@ function initNeuralNetwork() {
        SIGNAL PULSE
     ===================================================== */
 
-    let signalTimer = 0;
+    let signalTimer =
+        0;
 
-    let signalNode = null;
+    let signalNode =
+        null;
 
 
     function drawSignalPulse() {
@@ -2114,16 +2373,20 @@ function initNeuralNetwork() {
             Math.max(
                 0,
                 0.22 -
-                signalTimer *
-                0.025
+                    signalTimer *
+                    0.025
             );
 
 
-        if (alpha <= 0) {
+        if (
+            alpha <= 0
+        ) {
 
-            signalNode = null;
+            signalNode =
+                null;
 
-            signalTimer = 0;
+            signalTimer =
+                0;
 
             return;
 
@@ -2169,7 +2432,8 @@ function initNeuralNetwork() {
         () => {
 
             if (
-                Math.random() < 0.7
+                Math.random() <
+                0.7
             ) {
 
                 signalNode =
@@ -2181,7 +2445,8 @@ function initNeuralNetwork() {
                     ];
 
 
-                signalTimer = 0;
+                signalTimer =
+                    0;
 
             }
 
@@ -2197,10 +2462,15 @@ function initNeuralNetwork() {
     function animate() {
 
         ctx.clearRect(
+
             0,
+
             0,
+
             width,
+
             height
+
         );
 
 

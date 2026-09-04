@@ -8356,3 +8356,13 @@ canvas {
 .ai-window {
     pointer-events: auto !important;
 }
+#ai-overlay {
+    pointer-events: none;
+}
+
+#ai-overlay.active {
+    pointer-events: auto;
+}
+#neural-network-bg {
+    pointer-events: none !important;
+}
