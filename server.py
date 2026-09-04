@@ -1,4 +1,3 @@
-
 import os
 import json
 import requests
@@ -610,9 +609,9 @@ def chat():
         ai_response.raise_for_status()
 
 
-        # -------------------------------------------------
+        # =================================================
         # STREAM RESPONSE
-        # -------------------------------------------------
+        # =================================================
 
         @stream_with_context
         def generate():
@@ -621,34 +620,62 @@ def chat():
 
                 got_content = False
 
-                for line in ai_response.iter_lines(
-                    decode_unicode=True
+                # IMPORTANT:
+                # Keep the response as raw bytes so that we can
+                # explicitly decode it as UTF-8.
+                for raw_line in ai_response.iter_lines(
+                    decode_unicode=False
                 ):
 
-                    if not line:
+                    if not raw_line:
                         continue
 
 
-                    # Remove SSE prefix
+                    # -----------------------------------------
+                    # FORCE UTF-8 DECODING
+                    # -----------------------------------------
+
+                    line = raw_line.decode(
+                        "utf-8",
+                        errors="replace"
+                    )
+
+
+                    # -----------------------------------------
+                    # REMOVE SSE PREFIX
+                    # -----------------------------------------
+
                     if line.startswith("data: "):
+
                         line = line[6:]
 
 
-                    # End of stream
+                    # -----------------------------------------
+                    # END OF STREAM
+                    # -----------------------------------------
+
                     if line == "[DONE]":
+
                         break
 
+
+                    # -----------------------------------------
+                    # PARSE JSON
+                    # -----------------------------------------
 
                     try:
 
                         chunk = json.loads(line)
+
 
                         choices = chunk.get(
                             "choices",
                             []
                         )
 
+
                         if not choices:
+
                             continue
 
 
@@ -658,11 +685,15 @@ def chat():
                         )
 
 
-                        # Normal response content
+                        # -------------------------------------
+                        # GET GENERATED TEXT
+                        # -------------------------------------
+
                         content = delta.get(
                             "content",
                             ""
                         )
+
 
                         if content:
 
@@ -675,6 +706,10 @@ def chat():
 
                         continue
 
+
+                # ---------------------------------------------
+                # EMPTY RESPONSE CHECK
+                # ---------------------------------------------
 
                 if not got_content:
 
@@ -703,15 +738,17 @@ def chat():
                 )
 
 
-        # -------------------------------------------------
+        # =================================================
         # RETURN STREAM TO WEBSITE
-        # -------------------------------------------------
+        # =================================================
 
         return Response(
 
             generate(),
 
-            mimetype="text/plain",
+            # IMPORTANT:
+            # Explicitly tell the browser the response is UTF-8.
+            content_type="text/plain; charset=utf-8",
 
             headers={
                 "Cache-Control": "no-cache",
@@ -817,6 +854,7 @@ if __name__ == "__main__":
     print(" Mode: STREAMING")
     print(" Knowledge Base: LOADED")
     print(" CORS: ENABLED")
+    print(" UTF-8: ENABLED")
     print("====================================")
 
     app.run(
@@ -830,4 +868,3 @@ if __name__ == "__main__":
         threaded=True
 
     )
-
