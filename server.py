@@ -36,22 +36,80 @@ MODEL = "openai/gpt-oss-20b"
 
 
 # =========================================================
-# PROJECT KNOWLEDGE
+# PROJECT KNOWLEDGE + AI INSTRUCTIONS
 # =========================================================
 
 PROJECT_KNOWLEDGE = """
 You are SlipBot, the official AI assistant for the Smart Slip Detection System.
 
-You are NOT a generic chatbot. Your primary purpose is to answer questions about this
-specific school science-expo project accurately and clearly.
+==================================================
+YOUR TWO SOURCES OF INTELLIGENCE
+==================================================
 
-RESPONSE STYLE:
-- Answer directly and concisely.
-- For normal questions, use 1-4 sentences.
+You should use BOTH:
+
+1. PROJECT KNOWLEDGE
+2. YOUR GENERAL AI KNOWLEDGE AND REASONING
+
+The PROJECT KNOWLEDGE below is the authoritative source for facts about
+our specific Smart Slip Detection System prototype.
+
+Your general knowledge and reasoning should be used to:
+
+- Explain scientific concepts.
+- Explain technical concepts.
+- Simplify difficult ideas.
+- Connect different parts of the project.
+- Answer reasonable follow-up questions.
+- Help prepare answers for science-expo judges.
+- Explain WHY something is used.
+- Explain HOW something works.
+- Answer general questions that are outside the project.
+
+IMPORTANT:
+
+Your general knowledge must NOT be used to invent facts about our
+specific prototype.
+
+If a specific project detail is not documented below, say that the
+detail is not documented or cannot be confirmed.
+
+Do not invent:
+- Component prices
+- Testing results
+- Exact performance percentages
+- Final pin assignments that are marked as unconfirmed
+- Hardware that is not listed
+- Software features that are not documented
+- Certifications
+- Medical claims
+- Features described only as future improvements
+
+Clearly distinguish between:
+
+CURRENT PROTOTYPE
+and
+FUTURE / ADVANCED POSSIBILITIES.
+
+
+==================================================
+RESPONSE STYLE
+==================================================
+
+- Answer directly.
+- Be concise.
+- For normal questions, usually use 1-4 sentences.
 - For simple questions, use 1-2 sentences.
-- Avoid unnecessary introductions and conclusions.
+- For judge questions, give the direct answer first.
+- Explain further only when useful.
+- Use Class 9-friendly language unless deeper technical detail is requested.
 - Do not repeat the user's question.
-- For science-expo judge questions, give a short answer first, then explain only if useful.
+- Avoid unnecessary introductions.
+- Do not make every answer sound identical.
+- Use your reasoning ability to produce natural answers.
+- If the user asks for detailed explanation, provide more detail.
+- If the user asks for a short answer, keep it short.
+
 
 ==================================================
 PROJECT IDENTITY
@@ -67,9 +125,9 @@ Primary Controller:
 Arduino UNO R3
 
 Primary Purpose:
-The system is designed to detect a possible unexpected slip or fall using motion and
-supporting sensors, activate local audible alerts, and notify a designated person
-through GSM communication.
+The system is designed to detect a possible unexpected slip or fall using
+motion and supporting sensors, activate local audible alerts, and notify
+a designated person through GSM communication.
 
 Core concept:
 
@@ -301,8 +359,10 @@ AT+CMGF=1
 AT+CMGS
 
 The SIM900A requires an appropriate power supply capable of handling its current
-requirements. Do not claim that the Arduino 5V pin is automatically sufficient
-for every SIM900A board.
+requirements.
+
+Do not claim that the Arduino 5V pin is automatically sufficient for every
+SIM900A board.
 
 GSM operation also depends on SIM configuration, network availability, antenna,
 and module setup.
@@ -474,7 +534,76 @@ a certified medical or emergency device.
 
 
 ==================================================
-IMPORTANT ANTI-HALLUCINATION RULE
+GENERAL AI BEHAVIOR
+==================================================
+
+For questions that are NOT specifically about the project, use your normal
+general knowledge and reasoning.
+
+Examples:
+
+"What is IoT?"
+-> Give a normal explanation.
+
+"What is acceleration?"
+-> Give a normal scientific explanation.
+
+"Why does an accelerometer measure movement?"
+-> Explain using general physics knowledge.
+
+"What is the difference between an accelerometer and gyroscope?"
+-> Explain using general technical knowledge.
+
+For questions that ARE about the project:
+
+Use the documented project facts first.
+
+Then use general knowledge to explain or connect those facts.
+
+Example:
+
+Question:
+"Why is MPU6050 better than using only a basic accelerometer?"
+
+Answer using both:
+- Explain the documented reason that MPU6050 provides acceleration and rotation.
+- Use general knowledge to explain why gyroscope information can provide
+  additional motion/orientation information.
+
+Do NOT turn a possible future feature into a current feature.
+
+
+==================================================
+UNKNOWN PROJECT INFORMATION
+==================================================
+
+If the user asks:
+
+"What is the exact cost?"
+
+and no cost is documented:
+
+Say that the exact project cost has not been documented yet.
+
+Do NOT invent a number.
+
+If the user later provides the cost, that information can be added to the
+PROJECT KNOWLEDGE.
+
+The same rule applies to:
+
+- Exact testing results
+- Accuracy percentage
+- Battery life
+- Final sensor thresholds
+- Exact GSM response time
+- Exact ultrasonic pin assignment
+- Number of successful tests
+- Any other undocumented project-specific measurement.
+
+
+==================================================
+ANTI-HALLUCINATION RULE
 ==================================================
 
 NEVER invent:
@@ -482,16 +611,18 @@ NEVER invent:
 - Sensors not listed above
 - Hardware not listed above
 - Confirmed pin assignments that are marked as proposed
-- Detection algorithms that are described only as future improvements
+- Detection algorithms described only as future improvements
 - Medical certifications
 - Guaranteed emergency response
 - Testing results that were not provided
 - GSM behavior that has not been confirmed
+- Project costs that were not provided
+- Performance percentages that were not provided
 
 If information is uncertain, say so.
 
-If the user asks about something outside the project, answer normally but make
-it clear that it is outside the project's documented specifications.
+If the user asks about something outside the project, answer normally using
+general knowledge.
 
 You are SlipBot, the project's technical assistant.
 """
@@ -546,6 +677,7 @@ def chat():
         api_key = os.environ.get("GROQ_API_KEY")
 
         if not api_key:
+
             print("ERROR: GROQ_API_KEY is not configured.")
 
             return jsonify({
@@ -562,11 +694,12 @@ def chat():
         print("User:", user_message)
         print("Sending request to Groq...")
         print("Model:", MODEL)
+        print("Mode: NON-STREAMING")
         print("====================================")
 
 
         # -------------------------------------------------
-        # SEND NON-STREAMING REQUEST TO GROQ
+        # SEND REQUEST TO GROQ
         # -------------------------------------------------
 
         ai_response = requests.post(
@@ -592,33 +725,31 @@ def chat():
                     }
                 ],
 
-                # IMPORTANT:
-                # Non-streaming means Groq returns the
-                # complete answer before Flask sends it
-                # to the website.
+                # Return the complete answer at once.
                 "stream": False,
 
+                # Low temperature keeps project answers
+                # consistent and factual.
                 "temperature": 0.3,
 
-                # Increased from 150 so answers are less
-                # likely to get cut off.
+                # Enough room for a complete expo answer.
                 "max_tokens": 300
             },
 
-            # Prevent SlipBot from waiting forever.
+            # Do not let SlipBot remain stuck indefinitely.
             timeout=30
         )
 
 
         # -------------------------------------------------
-        # LOG GROQ STATUS
+        # LOG STATUS
         # -------------------------------------------------
 
         print("AI status:", ai_response.status_code)
 
 
         # -------------------------------------------------
-        # HANDLE GROQ ERRORS
+        # HANDLE GROQ ERROR
         # -------------------------------------------------
 
         if not ai_response.ok:
@@ -627,12 +758,17 @@ def chat():
             print(ai_response.text)
 
             try:
+
                 error_data = ai_response.json()
 
-                error_message = (
-                    error_data
-                    .get("error", {})
-                    .get("message", "Unknown Groq error.")
+                groq_error = error_data.get(
+                    "error",
+                    {}
+                )
+
+                error_message = groq_error.get(
+                    "message",
+                    "Unknown Groq error."
                 )
 
             except Exception:
@@ -640,14 +776,21 @@ def chat():
                 error_message = ai_response.text[:500]
 
             return jsonify({
-                "error": "The AI service rejected the request.",
-                "details": error_message,
-                "status": ai_response.status_code
+
+                "error":
+                "The AI service rejected the request.",
+
+                "details":
+                error_message,
+
+                "status":
+                ai_response.status_code
+
             }), 502
 
 
         # -------------------------------------------------
-        # PARSE GROQ JSON
+        # PARSE JSON
         # -------------------------------------------------
 
         try:
@@ -657,17 +800,24 @@ def chat():
         except ValueError:
 
             print("ERROR: Groq returned invalid JSON.")
+            print(ai_response.text[:1000])
 
             return jsonify({
-                "error": "The AI service returned an invalid response."
+
+                "error":
+                "The AI service returned an invalid response."
+
             }), 502
 
 
         # -------------------------------------------------
-        # EXTRACT AI MESSAGE
+        # GET CHOICES
         # -------------------------------------------------
 
-        choices = result.get("choices", [])
+        choices = result.get(
+            "choices",
+            []
+        )
 
         if not choices:
 
@@ -675,13 +825,32 @@ def chat():
             print(result)
 
             return jsonify({
-                "error": "The AI service returned no answer."
+
+                "error":
+                "The AI service returned no answer."
+
             }), 502
 
 
-        message = choices[0].get("message", {})
+        # -------------------------------------------------
+        # GET MESSAGE
+        # -------------------------------------------------
 
-        answer = message.get("content", "")
+        message = choices[0].get(
+            "message",
+            {}
+        )
+
+
+        # -------------------------------------------------
+        # GET CONTENT
+        # -------------------------------------------------
+
+        answer = message.get(
+            "content",
+            ""
+        )
+
 
         if not answer:
 
@@ -689,12 +858,15 @@ def chat():
             print(result)
 
             return jsonify({
-                "error": "The AI service returned an empty answer."
+
+                "error":
+                "The AI service returned an empty answer."
+
             }), 502
 
 
         # -------------------------------------------------
-        # LOG SUCCESS
+        # SUCCESS
         # -------------------------------------------------
 
         print("SlipBot answer received successfully.")
@@ -759,7 +931,7 @@ def chat():
 
     except Exception as e:
 
-        print("UNEXPECTED ERROR:")
+        print("UNEXPECTED SERVER ERROR:")
         print(str(e))
 
         return jsonify({
@@ -791,6 +963,7 @@ if __name__ == "__main__":
     print(" Model:", MODEL)
     print(" Mode: NON-STREAMING")
     print(" Knowledge Base: LOADED")
+    print(" General AI: ENABLED")
     print(" CORS: ENABLED")
     print(" UTF-8: ENABLED")
     print(" Timeout: 30 seconds")
