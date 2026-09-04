@@ -1,5 +1,5 @@
+
 import os
-import json
 import requests
 
 from flask import (
@@ -7,8 +7,7 @@ from flask import (
     request,
     jsonify,
     send_from_directory,
-    Response,
-    stream_with_context
+    Response
 )
 
 from flask_cors import CORS
@@ -513,7 +512,7 @@ def files(path):
 
 
 # =========================================================
-# STREAMING AI
+# AI CHAT
 # =========================================================
 
 @app.route("/api/chat", methods=["POST"])
@@ -525,18 +524,18 @@ def chat():
         # READ USER REQUEST
         # -------------------------------------------------
 
-        data = request.get_json()
+        data = request.get_json(silent=True)
 
         if not data:
             return jsonify({
-                "error": "No JSON data received"
+                "error": "No JSON data received."
             }), 400
 
         user_message = data.get("message", "").strip()
 
         if not user_message:
             return jsonify({
-                "error": "Empty message"
+                "error": "Empty message."
             }), 400
 
 
@@ -547,8 +546,10 @@ def chat():
         api_key = os.environ.get("GROQ_API_KEY")
 
         if not api_key:
+            print("ERROR: GROQ_API_KEY is not configured.")
+
             return jsonify({
-                "error": "GROQ_API_KEY is not configured on the server."
+                "error": "SlipBot is not configured correctly on the server."
             }), 500
 
 
@@ -557,13 +558,15 @@ def chat():
         # -------------------------------------------------
 
         print()
+        print("====================================")
         print("User:", user_message)
-        print("Sending streaming request to Groq...")
+        print("Sending request to Groq...")
         print("Model:", MODEL)
+        print("====================================")
 
 
         # -------------------------------------------------
-        # SEND REQUEST TO GROQ
+        # SEND NON-STREAMING REQUEST TO GROQ
         # -------------------------------------------------
 
         ai_response = requests.post(
@@ -572,8 +575,7 @@ def chat():
 
             headers={
                 "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-                "Accept": "text/event-stream"
+                "Content-Type": "application/json"
             },
 
             json={
@@ -590,183 +592,141 @@ def chat():
                     }
                 ],
 
-                "stream": True,
+                # IMPORTANT:
+                # Non-streaming means Groq returns the
+                # complete answer before Flask sends it
+                # to the website.
+                "stream": False,
+
                 "temperature": 0.3,
-                "max_tokens": 150
+
+                # Increased from 150 so answers are less
+                # likely to get cut off.
+                "max_tokens": 300
             },
 
-            stream=True,
-            timeout=120
+            # Prevent SlipBot from waiting forever.
+            timeout=30
         )
 
 
         # -------------------------------------------------
-        # STATUS
+        # LOG GROQ STATUS
         # -------------------------------------------------
 
         print("AI status:", ai_response.status_code)
 
-        ai_response.raise_for_status()
 
+        # -------------------------------------------------
+        # HANDLE GROQ ERRORS
+        # -------------------------------------------------
 
-        # =================================================
-        # STREAM RESPONSE
-        # =================================================
+        if not ai_response.ok:
 
-        @stream_with_context
-        def generate():
+            print("Groq error response:")
+            print(ai_response.text)
 
             try:
+                error_data = ai_response.json()
 
-                got_content = False
-
-                # IMPORTANT:
-                # Keep the response as raw bytes so that we can
-                # explicitly decode it as UTF-8.
-                for raw_line in ai_response.iter_lines(
-                    decode_unicode=False
-                ):
-
-                    if not raw_line:
-                        continue
-
-
-                    # -----------------------------------------
-                    # FORCE UTF-8 DECODING
-                    # -----------------------------------------
-
-                    line = raw_line.decode(
-                        "utf-8",
-                        errors="replace"
-                    )
-
-
-                    # -----------------------------------------
-                    # REMOVE SSE PREFIX
-                    # -----------------------------------------
-
-                    if line.startswith("data: "):
-
-                        line = line[6:]
-
-
-                    # -----------------------------------------
-                    # END OF STREAM
-                    # -----------------------------------------
-
-                    if line == "[DONE]":
-
-                        break
-
-
-                    # -----------------------------------------
-                    # PARSE JSON
-                    # -----------------------------------------
-
-                    try:
-
-                        chunk = json.loads(line)
-
-
-                        choices = chunk.get(
-                            "choices",
-                            []
-                        )
-
-
-                        if not choices:
-
-                            continue
-
-
-                        delta = choices[0].get(
-                            "delta",
-                            {}
-                        )
-
-
-                        # -------------------------------------
-                        # GET GENERATED TEXT
-                        # -------------------------------------
-
-                        content = delta.get(
-                            "content",
-                            ""
-                        )
-
-
-                        if content:
-
-                            got_content = True
-
-                            yield content
-
-
-                    except json.JSONDecodeError:
-
-                        continue
-
-
-                # ---------------------------------------------
-                # EMPTY RESPONSE CHECK
-                # ---------------------------------------------
-
-                if not got_content:
-
-                    print(
-                        "WARNING: Groq returned no content."
-                    )
-
-                    yield (
-                        "Sorry, SlipBot received an empty response from the AI."
-                    )
-
-
-                print()
-                print("SlipBot finished streaming.")
-
-
-            except Exception as e:
-
-                print(
-                    "Streaming error:",
-                    str(e)
+                error_message = (
+                    error_data
+                    .get("error", {})
+                    .get("message", "Unknown Groq error.")
                 )
 
-                yield (
-                    "\n\nSlipBot encountered a streaming error."
-                )
+            except Exception:
+
+                error_message = ai_response.text[:500]
+
+            return jsonify({
+                "error": "The AI service rejected the request.",
+                "details": error_message,
+                "status": ai_response.status_code
+            }), 502
 
 
-        # =================================================
-        # RETURN STREAM TO WEBSITE
-        # =================================================
+        # -------------------------------------------------
+        # PARSE GROQ JSON
+        # -------------------------------------------------
+
+        try:
+
+            result = ai_response.json()
+
+        except ValueError:
+
+            print("ERROR: Groq returned invalid JSON.")
+
+            return jsonify({
+                "error": "The AI service returned an invalid response."
+            }), 502
+
+
+        # -------------------------------------------------
+        # EXTRACT AI MESSAGE
+        # -------------------------------------------------
+
+        choices = result.get("choices", [])
+
+        if not choices:
+
+            print("ERROR: Groq returned no choices.")
+            print(result)
+
+            return jsonify({
+                "error": "The AI service returned no answer."
+            }), 502
+
+
+        message = choices[0].get("message", {})
+
+        answer = message.get("content", "")
+
+        if not answer:
+
+            print("ERROR: Groq returned empty content.")
+            print(result)
+
+            return jsonify({
+                "error": "The AI service returned an empty answer."
+            }), 502
+
+
+        # -------------------------------------------------
+        # LOG SUCCESS
+        # -------------------------------------------------
+
+        print("SlipBot answer received successfully.")
+        print("Answer length:", len(answer))
+        print("====================================")
+
+
+        # -------------------------------------------------
+        # RETURN COMPLETE ANSWER
+        # -------------------------------------------------
 
         return Response(
 
-            generate(),
+            answer,
 
-            # IMPORTANT:
-            # Explicitly tell the browser the response is UTF-8.
             content_type="text/plain; charset=utf-8",
 
             headers={
-                "Cache-Control": "no-cache",
-                "X-Accel-Buffering": "no"
+                "Cache-Control": "no-cache"
             }
 
         )
 
 
     # =====================================================
-    # ERROR HANDLING
+    # CONNECTION ERROR
     # =====================================================
 
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.ConnectionError as e:
 
-        print(
-            "ERROR: Could not connect to Groq."
-        )
+        print("ERROR: Could not connect to Groq.")
+        print(str(e))
 
         return jsonify({
 
@@ -776,58 +736,36 @@ def chat():
         }), 503
 
 
-    except requests.exceptions.Timeout:
+    # =====================================================
+    # TIMEOUT
+    # =====================================================
 
-        print(
-            "ERROR: Groq request timed out."
-        )
+    except requests.exceptions.Timeout as e:
+
+        print("ERROR: Groq request timed out.")
+        print(str(e))
 
         return jsonify({
 
             "error":
-            "The AI service took too long to respond."
+            "SlipBot took too long to respond. Please try again."
 
         }), 504
 
 
-    except requests.exceptions.HTTPError as e:
-
-        print(
-            "AI HTTP error:",
-            str(e)
-        )
-
-        if "ai_response" in locals():
-
-            print(
-                "Groq response:",
-                ai_response.text
-            )
-
-        return jsonify({
-
-            "error":
-            "The AI service rejected the request.",
-
-            "details":
-            ai_response.text
-            if "ai_response" in locals()
-            else str(e)
-
-        }), 502
-
+    # =====================================================
+    # UNEXPECTED ERROR
+    # =====================================================
 
     except Exception as e:
 
-        print(
-            "ERROR:",
-            str(e)
-        )
+        print("UNEXPECTED ERROR:")
+        print(str(e))
 
         return jsonify({
 
             "error":
-            "An unexpected server error occurred."
+            "An unexpected SlipBot server error occurred."
 
         }), 500
 
@@ -851,10 +789,12 @@ if __name__ == "__main__":
     print(" Server starting...")
     print(" AI: Groq")
     print(" Model:", MODEL)
-    print(" Mode: STREAMING")
+    print(" Mode: NON-STREAMING")
     print(" Knowledge Base: LOADED")
     print(" CORS: ENABLED")
     print(" UTF-8: ENABLED")
+    print(" Timeout: 30 seconds")
+    print(" Max output: 300 tokens")
     print("====================================")
 
     app.run(
@@ -868,3 +808,4 @@ if __name__ == "__main__":
         threaded=True
 
     )
+
