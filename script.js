@@ -1,3 +1,4 @@
+
 /* =========================================================
    SMART SLIP DETECTION SYSTEM
    MAIN JAVASCRIPT
@@ -17,12 +18,31 @@ const REQUEST_TIMEOUT = 30000;
 
 
 /* =========================================================
+   SLIPBOT MEMORY CONFIGURATION
+========================================================= */
+
+const MEMORY_KEY =
+    "slipbot_conversations_v1";
+
+const ACTIVE_CHAT_KEY =
+    "slipbot_active_chat_v1";
+
+const MAX_STORED_MESSAGES =
+    50;
+
+const MAX_AI_HISTORY =
+    20;
+
+
+/* =========================================================
    DOM READY
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("Smart Slip Detection System JS loaded.");
+    console.log(
+        "Smart Slip Detection System JS loaded."
+    );
 
     initSlipBot();
     initScrollReveal();
@@ -37,7 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initSlipBot() {
 
-    console.log("Initializing SlipBot...");
+    console.log(
+        "Initializing SlipBot..."
+    );
 
 
     /* -----------------------------------------------------
@@ -45,31 +67,59 @@ function initSlipBot() {
     ----------------------------------------------------- */
 
     const aiOpenBtn =
-        document.getElementById("ai-open-btn");
+        document.getElementById(
+            "ai-open-btn"
+        );
 
     const aiCloseBtn =
-        document.getElementById("ai-close-btn");
+        document.getElementById(
+            "ai-close-btn"
+        );
 
     const aiFullscreenBtn =
-        document.getElementById("ai-fullscreen-btn");
+        document.getElementById(
+            "ai-fullscreen-btn"
+        );
+
+    const aiNewChatBtn =
+        document.getElementById(
+            "ai-new-chat-btn"
+        );
+
+    const aiClearMemoryBtn =
+        document.getElementById(
+            "ai-clear-memory-btn"
+        );
 
     const aiOverlay =
-        document.getElementById("ai-overlay");
+        document.getElementById(
+            "ai-overlay"
+        );
 
     const aiInput =
-        document.getElementById("ai-input");
+        document.getElementById(
+            "ai-input"
+        );
 
     const aiSend =
-        document.getElementById("ai-send");
+        document.getElementById(
+            "ai-send"
+        );
 
     const chatMessages =
-        document.getElementById("chat-messages");
+        document.getElementById(
+            "chat-messages"
+        );
 
     const aiStatusText =
-        document.getElementById("ai-status-text");
+        document.getElementById(
+            "ai-status-text"
+        );
 
     const aiTypingIndicator =
-        document.getElementById("ai-typing-indicator");
+        document.getElementById(
+            "ai-typing-indicator"
+        );
 
 
     /* -----------------------------------------------------
@@ -77,64 +127,799 @@ function initSlipBot() {
     ----------------------------------------------------- */
 
     if (!aiOpenBtn) {
+
         console.error(
             "SlipBot error: #ai-open-btn not found."
         );
+
     }
 
     if (!aiCloseBtn) {
+
         console.error(
             "SlipBot error: #ai-close-btn not found."
         );
+
     }
 
     if (!aiFullscreenBtn) {
+
         console.warn(
             "SlipBot warning: #ai-fullscreen-btn not found."
         );
+
+    }
+
+    if (!aiNewChatBtn) {
+
+        console.warn(
+            "SlipBot warning: #ai-new-chat-btn not found."
+        );
+
+    }
+
+    if (!aiClearMemoryBtn) {
+
+        console.warn(
+            "SlipBot warning: #ai-clear-memory-btn not found."
+        );
+
     }
 
     if (!aiOverlay) {
+
         console.error(
             "SlipBot error: #ai-overlay not found."
         );
+
     }
 
     if (!aiInput) {
+
         console.error(
             "SlipBot error: #ai-input not found."
         );
+
     }
 
     if (!aiSend) {
+
         console.error(
             "SlipBot error: #ai-send not found."
         );
+
     }
 
     if (!chatMessages) {
+
         console.error(
             "SlipBot error: #chat-messages not found."
         );
+
+    }
+
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let slipBotBusy =
+        false;
+
+
+    let conversations =
+        {};
+
+    let activeChatId =
+        null;
+
+
+    /* =====================================================
+       MEMORY SYSTEM
+    ===================================================== */
+
+    function generateChatId() {
+
+        return (
+            "chat_" +
+            Date.now() +
+            "_" +
+            Math.random()
+                .toString(36)
+                .substring(2, 9)
+        );
+
     }
 
 
     /* -----------------------------------------------------
-       STATE
+       LOAD MEMORY
     ----------------------------------------------------- */
 
-    let slipBotBusy = false;
+    function loadMemory() {
+
+        try {
+
+            const stored =
+                localStorage.getItem(
+                    MEMORY_KEY
+                );
+
+
+            if (stored) {
+
+                const parsed =
+                    JSON.parse(
+                        stored
+                    );
+
+
+                if (
+                    parsed &&
+                    typeof parsed ===
+                        "object" &&
+                    !Array.isArray(
+                        parsed
+                    )
+                ) {
+
+                    conversations =
+                        parsed;
+
+                }
+                else {
+
+                    conversations =
+                        {};
+
+                }
+
+            }
+            else {
+
+                conversations =
+                    {};
+
+            }
+
+
+            activeChatId =
+                localStorage.getItem(
+                    ACTIVE_CHAT_KEY
+                );
+
+
+            if (
+                !activeChatId ||
+                !conversations[
+                    activeChatId
+                ]
+            ) {
+
+                activeChatId =
+                    generateChatId();
+
+
+                conversations[
+                    activeChatId
+                ] = {
+
+                    id:
+                        activeChatId,
+
+                    createdAt:
+                        Date.now(),
+
+                    updatedAt:
+                        Date.now(),
+
+                    messages:
+                        []
+
+                };
+
+
+                saveMemory();
+
+            }
+
+
+            console.log(
+                "SlipBot memory loaded.",
+                Object.keys(
+                    conversations
+                ).length,
+                "conversation(s)"
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Could not load SlipBot memory:",
+                error
+            );
+
+
+            conversations =
+                {};
+
+            activeChatId =
+                generateChatId();
+
+
+            conversations[
+                activeChatId
+            ] = {
+
+                id:
+                    activeChatId,
+
+                createdAt:
+                    Date.now(),
+
+                updatedAt:
+                    Date.now(),
+
+                messages:
+                    []
+
+            };
+
+
+            saveMemory();
+
+        }
+
+    }
+
+
+    /* -----------------------------------------------------
+       SAVE MEMORY
+    ----------------------------------------------------- */
+
+    function saveMemory() {
+
+        try {
+
+            localStorage.setItem(
+                MEMORY_KEY,
+                JSON.stringify(
+                    conversations
+                )
+            );
+
+
+            if (activeChatId) {
+
+                localStorage.setItem(
+                    ACTIVE_CHAT_KEY,
+                    activeChatId
+                );
+
+            }
+
+
+            console.log(
+                "SlipBot memory saved."
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Could not save SlipBot memory:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* -----------------------------------------------------
+       GET CURRENT CHAT
+    ----------------------------------------------------- */
+
+    function getCurrentChat() {
+
+        if (
+            !activeChatId ||
+            !conversations[
+                activeChatId
+            ]
+        ) {
+
+            return null;
+
+        }
+
+
+        return conversations[
+            activeChatId
+        ];
+
+    }
+
+
+    /* -----------------------------------------------------
+       REMEMBER MESSAGE
+    ----------------------------------------------------- */
+
+    function rememberMessage(
+        role,
+        content
+    ) {
+
+        const chat =
+            getCurrentChat();
+
+
+        if (!chat) {
+            return;
+        }
+
+
+        if (
+            role !== "user" &&
+            role !== "assistant"
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            typeof content !==
+                "string"
+        ) {
+
+            return;
+
+        }
+
+
+        const cleanContent =
+            content.trim();
+
+
+        if (!cleanContent) {
+            return;
+        }
+
+
+        chat.messages.push({
+
+            role:
+                role,
+
+            content:
+                cleanContent,
+
+            timestamp:
+                Date.now()
+
+        });
+
+
+        /* -------------------------------------------------
+           KEEP MEMORY SIZE UNDER CONTROL
+        ------------------------------------------------- */
+
+        if (
+            chat.messages.length >
+            MAX_STORED_MESSAGES
+        ) {
+
+            chat.messages =
+                chat.messages.slice(
+                    -MAX_STORED_MESSAGES
+                );
+
+        }
+
+
+        chat.updatedAt =
+            Date.now();
+
+
+        saveMemory();
+
+    }
+
+
+    /* -----------------------------------------------------
+       GET AI HISTORY
+    ----------------------------------------------------- */
+
+    function getAIHistory() {
+
+        const chat =
+            getCurrentChat();
+
+
+        if (
+            !chat ||
+            !Array.isArray(
+                chat.messages
+            )
+        ) {
+
+            return [];
+
+        }
+
+
+        return chat.messages
+            .slice(
+                -MAX_AI_HISTORY
+            )
+            .map(
+                message => ({
+
+                    role:
+                        message.role,
+
+                    content:
+                        message.content
+
+                })
+            );
+
+    }
+
+
+    /* -----------------------------------------------------
+       CREATE NEW CHAT
+    ----------------------------------------------------- */
+
+    function createNewChat() {
+
+        if (slipBotBusy) {
+
+            console.warn(
+                "Cannot create a new chat while SlipBot is busy."
+            );
+
+            return;
+
+        }
+
+
+        activeChatId =
+            generateChatId();
+
+
+        conversations[
+            activeChatId
+        ] = {
+
+            id:
+                activeChatId,
+
+            createdAt:
+                Date.now(),
+
+            updatedAt:
+                Date.now(),
+
+            messages:
+                []
+
+        };
+
+
+        saveMemory();
+
+
+        restoreCurrentChat();
+
+
+        setAIStatus(
+            "NEW CHAT READY"
+        );
+
+
+        console.log(
+            "New SlipBot conversation created:",
+            activeChatId
+        );
+
+
+        setTimeout(
+            () => {
+
+                setAIStatus(
+                    "SLIPBOT READY"
+                );
+
+            },
+            1500
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       CLEAR ALL MEMORY
+    ----------------------------------------------------- */
+
+    function clearMemory() {
+
+        if (slipBotBusy) {
+
+            console.warn(
+                "Cannot clear memory while SlipBot is busy."
+            );
+
+            return;
+
+        }
+
+
+        const confirmed =
+            window.confirm(
+                "Clear all SlipBot conversation memory? This cannot be undone."
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        conversations =
+            {};
+
+        activeChatId =
+            generateChatId();
+
+
+        conversations[
+            activeChatId
+        ] = {
+
+            id:
+                activeChatId,
+
+            createdAt:
+                Date.now(),
+
+            updatedAt:
+                Date.now(),
+
+            messages:
+                []
+
+        };
+
+
+        saveMemory();
+
+
+        restoreCurrentChat();
+
+
+        setAIStatus(
+            "MEMORY CLEARED"
+        );
+
+
+        setTimeout(
+            () => {
+
+                setAIStatus(
+                    "SLIPBOT READY"
+                );
+
+            },
+            1500
+        );
+
+
+        console.log(
+            "All SlipBot conversation memory cleared."
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       RESTORE CURRENT CHAT
+    ----------------------------------------------------- */
+
+    function restoreCurrentChat() {
+
+        if (!chatMessages) {
+            return;
+        }
+
+
+        chatMessages.innerHTML =
+            "";
+
+
+        const chat =
+            getCurrentChat();
+
+
+        if (
+            !chat ||
+            !Array.isArray(
+                chat.messages
+            ) ||
+            chat.messages.length ===
+                0
+        ) {
+
+            const welcome =
+                document.createElement(
+                    "div"
+                );
+
+
+            welcome.className =
+                "chat-message bot bot-message";
+
+
+            welcome.innerHTML = `
+
+                <div class="bot-message-header">
+
+                    <div class="mini-bot-icon">
+                        🤖
+                    </div>
+
+                    <span>
+                        SlipBot
+                    </span>
+
+                    <small>
+                        NOW
+                    </small>
+
+                </div>
+
+                <div class="bot-message-content">
+
+                    Hello! I'm SlipBot, the AI assistant for the Smart Slip Detection System.
+
+                    Ask me about the project, its sensors, how fall detection works, the science behind it, or anything else you're curious about.
+
+                </div>
+
+            `;
+
+
+            chatMessages.appendChild(
+                welcome
+            );
+
+
+            scrollChatToBottom();
+
+
+            return;
+
+        }
+
+
+        chat.messages.forEach(
+            message => {
+
+                if (
+                    message.role ===
+                    "user"
+                ) {
+
+                    addUserMessage(
+                        message.content
+                    );
+
+                }
+                else if (
+                    message.role ===
+                    "assistant"
+                ) {
+
+                    addStoredBotMessage(
+                        message.content
+                    );
+
+                }
+
+            }
+        );
+
+
+        scrollChatToBottom();
+
+    }
+
+
+    /* -----------------------------------------------------
+       ADD STORED BOT MESSAGE
+    ----------------------------------------------------- */
+
+    function addStoredBotMessage(
+        text
+    ) {
+
+        if (!chatMessages) {
+            return;
+        }
+
+
+        const message =
+            document.createElement(
+                "div"
+            );
+
+
+        message.className =
+            "chat-message bot bot-message";
+
+
+        message.innerHTML = `
+
+            <div class="bot-message-header">
+
+                <div class="mini-bot-icon">
+                    🤖
+                </div>
+
+                <span>
+                    SlipBot
+                </span>
+
+                <small>
+                    MEMORY
+                </small>
+
+            </div>
+
+            <div class="bot-message-content"></div>
+
+        `;
+
+
+        const content =
+            message.querySelector(
+                ".bot-message-content"
+            );
+
+
+        if (content) {
+
+            content.textContent =
+                text;
+
+        }
+
+
+        chatMessages.appendChild(
+            message
+        );
+
+    }
 
 
     /* =====================================================
        STATUS
     ===================================================== */
 
-    function setAIStatus(status) {
+    function setAIStatus(
+        status
+    ) {
 
         if (aiStatusText) {
-            aiStatusText.textContent = status;
+
+            aiStatusText.textContent =
+                status;
+
         }
+
 
         console.log(
             "SlipBot status:",
@@ -176,7 +961,10 @@ function initSlipBot() {
        OPEN SLIPBOT
     ===================================================== */
 
-    if (aiOpenBtn && aiOverlay) {
+    if (
+        aiOpenBtn &&
+        aiOverlay
+    ) {
 
         aiOpenBtn.addEventListener(
             "click",
@@ -185,22 +973,33 @@ function initSlipBot() {
                 event.preventDefault();
                 event.stopPropagation();
 
-                aiOverlay.classList.add("active");
+
+                aiOverlay.classList.add(
+                    "active"
+                );
+
 
                 document.body.style.overflow =
                     "hidden";
+
 
                 setAIStatus(
                     "SLIPBOT READY"
                 );
 
-                setTimeout(() => {
 
-                    if (aiInput) {
-                        aiInput.focus();
-                    }
+                setTimeout(
+                    () => {
 
-                }, 300);
+                        if (aiInput) {
+
+                            aiInput.focus();
+
+                        }
+
+                    },
+                    300
+                );
 
             }
         );
@@ -212,7 +1011,10 @@ function initSlipBot() {
        CLOSE SLIPBOT
     ===================================================== */
 
-    if (aiCloseBtn && aiOverlay) {
+    if (
+        aiCloseBtn &&
+        aiOverlay
+    ) {
 
         aiCloseBtn.addEventListener(
             "click",
@@ -221,16 +1023,20 @@ function initSlipBot() {
                 event.preventDefault();
                 event.stopPropagation();
 
+
                 aiOverlay.classList.remove(
                     "active"
                 );
+
 
                 aiOverlay.classList.remove(
                     "fullscreen"
                 );
 
+
                 document.body.style.overflow =
                     "";
+
 
                 if (aiFullscreenBtn) {
 
@@ -238,6 +1044,7 @@ function initSlipBot() {
                         "Full screen";
 
                 }
+
 
                 setAIStatus(
                     "SLIPBOT STANDBY"
@@ -253,7 +1060,10 @@ function initSlipBot() {
        FULLSCREEN TOGGLE
     ===================================================== */
 
-    if (aiFullscreenBtn && aiOverlay) {
+    if (
+        aiFullscreenBtn &&
+        aiOverlay
+    ) {
 
         aiFullscreenBtn.addEventListener(
             "click",
@@ -262,15 +1072,61 @@ function initSlipBot() {
                 event.preventDefault();
                 event.stopPropagation();
 
+
                 const isFullscreen =
                     aiOverlay.classList.toggle(
                         "fullscreen"
                     );
 
+
                 aiFullscreenBtn.title =
                     isFullscreen
                         ? "Exit full screen"
                         : "Full screen";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       NEW CHAT BUTTON
+    ===================================================== */
+
+    if (aiNewChatBtn) {
+
+        aiNewChatBtn.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                createNewChat();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       CLEAR MEMORY BUTTON
+    ===================================================== */
+
+    if (aiClearMemoryBtn) {
+
+        aiClearMemoryBtn.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                clearMemory();
 
             }
         );
@@ -289,19 +1145,23 @@ function initSlipBot() {
             (event) => {
 
                 if (
-                    event.target === aiOverlay
+                    event.target ===
+                    aiOverlay
                 ) {
 
                     aiOverlay.classList.remove(
                         "active"
                     );
 
+
                     aiOverlay.classList.remove(
                         "fullscreen"
                     );
 
+
                     document.body.style.overflow =
                         "";
+
 
                     if (aiFullscreenBtn) {
 
@@ -309,6 +1169,7 @@ function initSlipBot() {
                             "Full screen";
 
                     }
+
 
                     setAIStatus(
                         "SLIPBOT STANDBY"
@@ -331,7 +1192,8 @@ function initSlipBot() {
         (event) => {
 
             if (
-                event.key === "Escape" &&
+                event.key ===
+                    "Escape" &&
                 aiOverlay &&
                 aiOverlay.classList.contains(
                     "active"
@@ -342,12 +1204,15 @@ function initSlipBot() {
                     "active"
                 );
 
+
                 aiOverlay.classList.remove(
                     "fullscreen"
                 );
 
+
                 document.body.style.overflow =
                     "";
+
 
                 if (aiFullscreenBtn) {
 
@@ -355,6 +1220,7 @@ function initSlipBot() {
                         "Full screen";
 
                 }
+
 
                 setAIStatus(
                     "SLIPBOT STANDBY"
@@ -370,24 +1236,33 @@ function initSlipBot() {
        ADD USER MESSAGE
     ===================================================== */
 
-    function addUserMessage(text) {
+    function addUserMessage(
+        text
+    ) {
 
         if (!chatMessages) {
             return;
         }
 
+
         const message =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         message.className =
             "chat-message user user-message";
 
+
         message.textContent =
             text;
+
 
         chatMessages.appendChild(
             message
         );
+
 
         scrollChatToBottom();
 
@@ -404,13 +1279,19 @@ function initSlipBot() {
             return null;
         }
 
+
         const message =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         message.className =
             "chat-message bot bot-message";
 
+
         message.innerHTML = `
+
             <div class="bot-message-header">
 
                 <div class="mini-bot-icon">
@@ -428,13 +1309,17 @@ function initSlipBot() {
             </div>
 
             <div class="bot-message-content"></div>
+
         `;
+
 
         chatMessages.appendChild(
             message
         );
 
+
         scrollChatToBottom();
+
 
         return message.querySelector(
             ".bot-message-content"
@@ -452,6 +1337,7 @@ function initSlipBot() {
         if (!chatMessages) {
             return;
         }
+
 
         chatMessages.scrollTo({
 
@@ -479,18 +1365,22 @@ function initSlipBot() {
             return;
         }
 
+
         element.textContent =
             "";
 
+
         const characters =
             [...String(text)];
+
 
         let speed =
             12;
 
 
         if (
-            characters.length > 900
+            characters.length >
+            900
         ) {
 
             speed =
@@ -498,7 +1388,8 @@ function initSlipBot() {
 
         }
         else if (
-            characters.length > 600
+            characters.length >
+            600
         ) {
 
             speed =
@@ -506,7 +1397,8 @@ function initSlipBot() {
 
         }
         else if (
-            characters.length > 300
+            characters.length >
+            300
         ) {
 
             speed =
@@ -526,7 +1418,8 @@ function initSlipBot() {
 
 
             if (
-                i % 3 === 0
+                i % 3 ===
+                0
             ) {
 
                 scrollChatToBottom();
@@ -565,6 +1458,7 @@ function initSlipBot() {
 
         const controller =
             new AbortController();
+
 
         const timeoutId =
             setTimeout(
@@ -735,16 +1629,43 @@ function initSlipBot() {
         }
 
 
+        /* =================================================
+           IMPORTANT MEMORY STEP
+           Capture history BEFORE adding the new question.
+        ================================================= */
+
+        const history =
+            getAIHistory();
+
+
+        console.log(
+            "Sending conversation memory:",
+            history.length,
+            "messages"
+        );
+
+
         /* -------------------------------------------------
-           USER MESSAGE
+           USER MESSAGE UI
         ------------------------------------------------- */
 
         addUserMessage(
             question
         );
 
+
         aiInput.value =
             "";
+
+
+        /* -------------------------------------------------
+           SAVE USER MESSAGE
+        ------------------------------------------------- */
+
+        rememberMessage(
+            "user",
+            question
+        );
 
 
         /* -------------------------------------------------
@@ -754,8 +1675,10 @@ function initSlipBot() {
         slipBotBusy =
             true;
 
+
         aiSend.disabled =
             true;
+
 
         aiInput.disabled =
             true;
@@ -768,6 +1691,7 @@ function initSlipBot() {
         setAIStatus(
             "CONNECTING TO SLIPBOT..."
         );
+
 
         showTypingIndicator();
 
@@ -786,16 +1710,21 @@ function initSlipBot() {
                 "SlipBot error: could not create bot message."
             );
 
+
             slipBotBusy =
                 false;
+
 
             aiSend.disabled =
                 false;
 
+
             aiInput.disabled =
                 false;
 
+
             hideTypingIndicator();
+
 
             return;
 
@@ -807,6 +1736,7 @@ function initSlipBot() {
         ------------------------------------------------- */
 
         botMessage.innerHTML = `
+
             <div class="thinking-bubble">
 
                 <span>
@@ -822,6 +1752,7 @@ function initSlipBot() {
                 </div>
 
             </div>
+
         `;
 
 
@@ -862,8 +1793,13 @@ function initSlipBot() {
 
                         body:
                             JSON.stringify({
+
                                 message:
-                                    question
+                                    question,
+
+                                history:
+                                    history
+
                             })
 
                     },
@@ -951,6 +1887,42 @@ function initSlipBot() {
                 );
 
 
+                /* -------------------------------------------------
+                   REMOVE USER MESSAGE FROM MEMORY
+                   Because the request failed.
+                ------------------------------------------------- */
+
+                const failedChat =
+                    getCurrentChat();
+
+
+                if (
+                    failedChat &&
+                    Array.isArray(
+                        failedChat.messages
+                    )
+                ) {
+
+                    failedChat.messages =
+                        failedChat.messages.filter(
+                            message =>
+                                !(
+                                    message.role ===
+                                        "user" &&
+                                    message.content ===
+                                        question &&
+                                    message.timestamp >=
+                                        Date.now() -
+                                        10000
+                                )
+                        );
+
+
+                    saveMemory();
+
+                }
+
+
                 return;
 
             }
@@ -1010,6 +1982,7 @@ function initSlipBot() {
 
             hideTypingIndicator();
 
+
             setAIStatus(
                 "RESPONSE RECEIVED"
             );
@@ -1030,6 +2003,19 @@ function initSlipBot() {
             await typeBotMessage(
 
                 botMessage,
+
+                reply.trim()
+
+            );
+
+
+            /* -------------------------------------------------
+               SAVE AI RESPONSE TO MEMORY
+            ------------------------------------------------- */
+
+            rememberMessage(
+
+                "assistant",
 
                 reply.trim()
 
@@ -1061,6 +2047,41 @@ function initSlipBot() {
 
             botMessage.innerHTML =
                 "";
+
+
+            /* -------------------------------------------------
+               REMOVE FAILED USER MESSAGE
+            ------------------------------------------------- */
+
+            const failedChat =
+                getCurrentChat();
+
+
+            if (
+                failedChat &&
+                Array.isArray(
+                    failedChat.messages
+                )
+            ) {
+
+                failedChat.messages =
+                    failedChat.messages.filter(
+                        message =>
+                            !(
+                                message.role ===
+                                    "user" &&
+                                message.content ===
+                                    question &&
+                                message.timestamp >=
+                                    Date.now() -
+                                    10000
+                            )
+                    );
+
+
+                saveMemory();
+
+            }
 
 
             /* -------------------------------------------------
@@ -1129,6 +2150,7 @@ function initSlipBot() {
             aiSend.disabled =
                 false;
 
+
             aiInput.disabled =
                 false;
 
@@ -1168,6 +2190,7 @@ function initSlipBot() {
 
                 event.preventDefault();
 
+
                 sendMessage();
 
             }
@@ -1193,6 +2216,7 @@ function initSlipBot() {
                 ) {
 
                     event.preventDefault();
+
 
                     sendMessage();
 
@@ -1260,6 +2284,7 @@ function initSlipBot() {
                     "active"
                 );
 
+
                 document.body.style.overflow =
                     "hidden";
 
@@ -1277,10 +2302,21 @@ function initSlipBot() {
 
 
     /* =====================================================
+       INITIALIZE MEMORY
+    ===================================================== */
+
+    loadMemory();
+
+
+    restoreCurrentChat();
+
+
+    /* =====================================================
        INITIAL STATE
     ===================================================== */
 
     hideTypingIndicator();
+
 
     setAIStatus(
         "SLIPBOT STANDBY"
@@ -1289,6 +2325,12 @@ function initSlipBot() {
 
     console.log(
         "SlipBot initialization complete."
+    );
+
+
+    console.log(
+        "Conversation memory:",
+        "ENABLED"
     );
 
 }
@@ -1476,14 +2518,23 @@ function initScrollReveal() {
 
             const heading =
                 section.querySelector(
+
                     ":scope > .section-heading, " +
+
                     ":scope > .how-heading, " +
+
                     ":scope > .hardware-heading, " +
+
                     ":scope > .science-heading, " +
+
                     ":scope > .emergency-heading, " +
+
                     ":scope > .testing-heading, " +
+
                     ":scope > .project-heading, " +
+
                     ":scope > .video-heading"
+
                 );
 
 
@@ -1845,17 +2896,22 @@ function initNeuralNetwork() {
     canvas.style.position =
         "fixed";
 
+
     canvas.style.top =
         "0";
+
 
     canvas.style.left =
         "0";
 
+
     canvas.style.width =
         "100%";
 
+
     canvas.style.height =
         "100%";
+
 
     canvas.style.zIndex =
         "-1";
@@ -1877,6 +2933,7 @@ function initNeuralNetwork() {
         console.warn(
             "Canvas is not supported."
         );
+
 
         return;
 
@@ -1914,8 +2971,10 @@ function initNeuralNetwork() {
     let width =
         0;
 
+
     let height =
         0;
+
 
     let dpr =
         1;
@@ -1929,9 +2988,12 @@ function initNeuralNetwork() {
 
         dpr =
             Math.min(
+
                 window.devicePixelRatio ||
                     1,
+
                 2
+
             );
 
 
@@ -1960,12 +3022,19 @@ function initNeuralNetwork() {
 
 
         ctx.setTransform(
+
             dpr,
+
             0,
+
             0,
+
             dpr,
+
             0,
+
             0
+
         );
 
     }
@@ -1999,24 +3068,31 @@ function initNeuralNetwork() {
 
 
     window.addEventListener(
+
         "mousemove",
+
         event => {
 
             mouse.x =
                 event.clientX;
 
+
             mouse.y =
                 event.clientY;
 
         },
+
         {
             passive: true
         }
+
     );
 
 
     window.addEventListener(
+
         "mouseout",
+
         event => {
 
             if (
@@ -2027,12 +3103,14 @@ function initNeuralNetwork() {
                 mouse.x =
                     null;
 
+
                 mouse.y =
                     null;
 
             }
 
         }
+
     );
 
 
@@ -2420,6 +3498,7 @@ function initNeuralNetwork() {
     let signalTimer =
         0;
 
+
     let signalNode =
         null;
 
@@ -2442,10 +3521,13 @@ function initNeuralNetwork() {
 
         const alpha =
             Math.max(
+
                 0,
+
                 0.22 -
                     signalTimer *
                     0.025
+
             );
 
 
@@ -2456,8 +3538,10 @@ function initNeuralNetwork() {
             signalNode =
                 null;
 
+
             signalTimer =
                 0;
+
 
             return;
 
@@ -2500,6 +3584,7 @@ function initNeuralNetwork() {
     ===================================================== */
 
     setInterval(
+
         () => {
 
             if (
@@ -2510,8 +3595,10 @@ function initNeuralNetwork() {
                 signalNode =
                     nodes[
                         Math.floor(
+
                             Math.random() *
                             nodes.length
+
                         )
                     ];
 
@@ -2522,7 +3609,9 @@ function initNeuralNetwork() {
             }
 
         },
+
         3500
+
     );
 
 
@@ -2577,3 +3666,4 @@ function initNeuralNetwork() {
     );
 
 }
+
