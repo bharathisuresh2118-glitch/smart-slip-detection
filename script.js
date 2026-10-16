@@ -15,6 +15,7 @@ const SLIPBOT_API_URL =
     "https://smart-slip-detection.onrender.com/api/chat";
 
 const REQUEST_TIMEOUT = 30000;
+const MAX_USER_MESSAGE_CHARS = 12000;
 
 
 /* =========================================================
@@ -28,10 +29,10 @@ const ACTIVE_CHAT_KEY =
     "slipbot_active_chat_v1";
 
 const MAX_STORED_MESSAGES =
-    50;
+    80;
 
 const MAX_AI_HISTORY =
-    20;
+    12;
 
 
 /* =========================================================
@@ -96,10 +97,22 @@ function initSlipBot() {
             "ai-overlay"
         );
 
-    const aiInput =
+    let aiInput =
         document.getElementById(
             "ai-input"
         );
+
+    if (aiInput && aiInput.tagName === "INPUT") {
+        const composer = document.createElement("textarea");
+        composer.id = aiInput.id;
+        composer.placeholder = aiInput.placeholder;
+        composer.autocomplete = aiInput.autocomplete;
+        composer.maxLength = MAX_USER_MESSAGE_CHARS;
+        composer.rows = 1;
+        composer.setAttribute("aria-label", "Ask SlipBot a question");
+        aiInput.replaceWith(composer);
+        aiInput = composer;
+    }
 
     const aiSend =
         document.getElementById(
@@ -551,21 +564,18 @@ function initSlipBot() {
         }
 
 
+        let remaining = 7000;
         return chat.messages
-            .slice(
-                -MAX_AI_HISTORY
-            )
-            .map(
-                message => ({
-
-                    role:
-                        message.role,
-
-                    content:
-                        message.content
-
-                })
-            );
+            .slice(-MAX_AI_HISTORY)
+            .reverse()
+            .map(message => {
+                if (!message || typeof message.content !== "string") return null;
+                const content = message.content.trim().slice(0, Math.min(1400, remaining));
+                remaining -= content.length;
+                return remaining >= 0 && content ? { role: message.role, content } : null;
+            })
+            .filter(Boolean)
+            .reverse();
 
     }
 
@@ -768,7 +778,7 @@ function initSlipBot() {
                 <div class="bot-message-header">
 
                     <div class="mini-bot-icon">
-                        🤖
+                        ✳
                     </div>
 
                     <span>
@@ -783,9 +793,7 @@ function initSlipBot() {
 
                 <div class="bot-message-content">
 
-                    Hello! I'm SlipBot, the AI assistant for the Smart Slip Detection System.
-
-                    Ask me about the project, its sensors, how fall detection works, the science behind it, or anything else you're curious about.
+                    Hi. I can explain the project, the sensors, the detection sequence, or the limits of this prototype.
 
                 </div>
 
@@ -1366,81 +1374,7 @@ function initSlipBot() {
         }
 
 
-        element.textContent =
-            "";
-
-
-        const characters =
-            [...String(text)];
-
-
-        let speed =
-            12;
-
-
-        if (
-            characters.length >
-            900
-        ) {
-
-            speed =
-                5;
-
-        }
-        else if (
-            characters.length >
-            600
-        ) {
-
-            speed =
-                7;
-
-        }
-        else if (
-            characters.length >
-            300
-        ) {
-
-            speed =
-                9;
-
-        }
-
-
-        for (
-            let i = 0;
-            i < characters.length;
-            i++
-        ) {
-
-            element.textContent +=
-                characters[i];
-
-
-            if (
-                i % 3 ===
-                0
-            ) {
-
-                scrollChatToBottom();
-
-            }
-
-
-            await new Promise(
-                resolve => {
-
-                    setTimeout(
-                        resolve,
-                        speed
-                    );
-
-                }
-            );
-
-        }
-
-
+        element.textContent = String(text);
         scrollChatToBottom();
 
     }
@@ -1499,7 +1433,8 @@ function initSlipBot() {
     ===================================================== */
 
     async function readBackendResponse(
-        response
+        response,
+        messageElement
     ) {
 
         const contentType =
@@ -1507,6 +1442,43 @@ function initSlipBot() {
                 "content-type"
             ) || "";
 
+
+        if (contentType.toLowerCase().includes("text/event-stream") && response.body) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = "";
+            let answer = "";
+            let started = false;
+
+            while (true) {
+                const { value, done } = await reader.read();
+                buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+                const events = buffer.split("\n\n");
+                buffer = events.pop() || "";
+                for (const event of events) {
+                    const dataLine = event.split("\n").find(line => line.startsWith("data: "));
+                    if (!dataLine) continue;
+                    const payload = dataLine.slice(6);
+                    if (payload === "[DONE]") continue;
+                    const data = JSON.parse(payload);
+                    if (data.error) throw new Error(data.error);
+                    if (typeof data.token === "string" && data.token) {
+                        if (!started && messageElement) {
+                            messageElement.textContent = "";
+                            started = true;
+                            hideTypingIndicator();
+                            setAIStatus("SLIPBOT RESPONDING…");
+                        }
+                        answer += data.token;
+                        if (messageElement) messageElement.textContent = answer;
+                        if (answer.length % 120 < data.token.length) scrollChatToBottom();
+                    }
+                }
+                if (done) break;
+            }
+            scrollChatToBottom();
+            return answer;
+        }
 
         /* -------------------------------------------------
            JSON RESPONSE
@@ -1621,7 +1593,7 @@ function initSlipBot() {
 
 
         const question =
-            aiInput.value.trim();
+            aiInput.value.trim().slice(0, MAX_USER_MESSAGE_CHARS);
 
 
         if (!question) {
@@ -1656,6 +1628,8 @@ function initSlipBot() {
 
         aiInput.value =
             "";
+
+        aiInput.style.height = "42px";
 
 
         /* -------------------------------------------------
@@ -1765,10 +1739,7 @@ function initSlipBot() {
 
         try {
 
-            console.log(
-                "Sending SlipBot request:",
-                question
-            );
+            console.log("Sending SlipBot request:", question.length, "characters");
 
 
             const response =
@@ -1934,14 +1905,12 @@ function initSlipBot() {
 
             const reply =
                 await readBackendResponse(
-                    response
+                    response,
+                    botMessage
                 );
 
 
-            console.log(
-                "SlipBot response:",
-                reply
-            );
+            console.log("SlipBot response characters:", reply.length);
 
 
             /* -------------------------------------------------
@@ -1991,10 +1960,6 @@ function initSlipBot() {
             /* -------------------------------------------------
                CLEAR THINKING UI
             ------------------------------------------------- */
-
-            botMessage.innerHTML =
-                "";
-
 
             /* -------------------------------------------------
                TYPE RESPONSE
@@ -2204,6 +2169,11 @@ function initSlipBot() {
     ===================================================== */
 
     if (aiInput) {
+
+        aiInput.addEventListener("input", () => {
+            aiInput.style.height = "auto";
+            aiInput.style.height = Math.min(aiInput.scrollHeight, 150) + "px";
+        });
 
         aiInput.addEventListener(
             "keydown",
