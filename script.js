@@ -119,6 +119,19 @@ function initSlipBot() {
             "ai-send"
         );
 
+    const aiWindow =
+        aiOverlay
+            ? aiOverlay.querySelector(".ai-window")
+            : null;
+
+    function giveButtonFeedback(button) {
+        if (!button) return;
+        button.classList.remove("is-pressed");
+        void button.offsetWidth;
+        button.classList.add("is-pressed");
+        setTimeout(() => button.classList.remove("is-pressed"), 260);
+    }
+
     const chatMessages =
         document.getElementById(
             "chat-messages"
@@ -980,6 +993,7 @@ function initSlipBot() {
 
                 event.preventDefault();
                 event.stopPropagation();
+                giveButtonFeedback(aiOpenBtn);
 
 
                 aiOverlay.classList.add(
@@ -1030,6 +1044,7 @@ function initSlipBot() {
 
                 event.preventDefault();
                 event.stopPropagation();
+                giveButtonFeedback(aiCloseBtn);
 
 
                 aiOverlay.classList.remove(
@@ -1079,6 +1094,7 @@ function initSlipBot() {
 
                 event.preventDefault();
                 event.stopPropagation();
+                giveButtonFeedback(aiFullscreenBtn);
 
 
                 const isFullscreen =
@@ -1110,6 +1126,7 @@ function initSlipBot() {
 
                 event.preventDefault();
                 event.stopPropagation();
+                giveButtonFeedback(aiNewChatBtn);
 
 
                 createNewChat();
@@ -1132,6 +1149,7 @@ function initSlipBot() {
 
                 event.preventDefault();
                 event.stopPropagation();
+                giveButtonFeedback(aiClearMemoryBtn);
 
 
                 clearMemory();
@@ -1649,9 +1667,15 @@ function initSlipBot() {
         slipBotBusy =
             true;
 
+        if (aiWindow) {
+            aiWindow.classList.add("is-busy");
+        }
+
 
         aiSend.disabled =
             true;
+
+        aiSend.setAttribute("aria-busy", "true");
 
 
         aiInput.disabled =
@@ -1711,7 +1735,9 @@ function initSlipBot() {
 
         botMessage.innerHTML = `
 
-            <div class="thinking-bubble">
+            <div class="thinking-bubble" role="status" aria-live="polite">
+
+                <span class="thinking-orb" aria-hidden="true"></span>
 
                 <span>
                     SlipBot is thinking
@@ -1818,10 +1844,14 @@ function initSlipBot() {
                     "";
 
 
-                let displayError =
-                    "SlipBot server returned HTTP " +
-                    response.status +
-                    ".";
+                let displayError = "SlipBot is temporarily unavailable.";
+
+                if (serverMessage.toLowerCase().includes("not configured")) {
+                    displayError = "SlipBot AI is not connected yet. Add a GROQ_API_KEY in Render, then redeploy the service.";
+                }
+                else if (response.status !== 500) {
+                    displayError = "SlipBot server returned HTTP " + response.status + ".";
+                }
 
 
                 if (
@@ -1829,9 +1859,9 @@ function initSlipBot() {
                     serverMessage.trim()
                 ) {
 
-                    displayError +=
-                        "\n\n" +
-                        serverMessage.trim();
+                    if (!serverMessage.toLowerCase().includes("not configured")) {
+                        displayError += "\n\n" + serverMessage.trim();
+                    }
 
                 }
 
@@ -2085,7 +2115,7 @@ function initSlipBot() {
 
                     botMessage,
 
-                    "⚠️ I couldn't reach the SlipBot server. Please check the connection and try again."
+                    "⚠️ SlipBot is not connected to its live AI service yet. Make sure the Render service is deployed and its GROQ_API_KEY environment variable is set."
 
                 );
 
@@ -2111,9 +2141,15 @@ function initSlipBot() {
             slipBotBusy =
                 false;
 
+            if (aiWindow) {
+                aiWindow.classList.remove("is-busy");
+            }
+
 
             aiSend.disabled =
                 false;
+
+            aiSend.removeAttribute("aria-busy");
 
 
             aiInput.disabled =
@@ -2154,6 +2190,7 @@ function initSlipBot() {
             (event) => {
 
                 event.preventDefault();
+                giveButtonFeedback(aiSend);
 
 
                 sendMessage();
@@ -2218,6 +2255,7 @@ function initSlipBot() {
 
 
             event.preventDefault();
+            giveButtonFeedback(button);
 
 
             if (slipBotBusy) {
